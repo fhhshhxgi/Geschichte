@@ -1,0 +1,6 @@
+{
+  "name": "Berliner Konferenz 1884–1885",
+  "description": "Interaktives historisches Raumerlebnis und digitale Dokumentation zur Kongokonferenz von 1884–1885 in Berlin",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
