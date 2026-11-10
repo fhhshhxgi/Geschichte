@@ -10,7 +10,6 @@ import { ConferenceRoom } from './components/ConferenceRoom';
 import { InteractiveAfricaMap } from './components/InteractiveAfricaMap';
 import { ImperialismSection } from './components/ImperialismSection';
 import { TimelineSection } from './components/TimelineSection';
-import { EducationalSections } from './components/EducationalSections';
 import { SourcesModal } from './components/SourcesModal';
 import { MuseumEntranceModal } from './components/MuseumEntranceModal';
 import { TopNav } from './components/TopNav';
@@ -23,9 +22,9 @@ import { soundFx } from './utils/soundEffects';
 type SceneState = 'intro' | 'conference-room' | 'africa-absence' | 'africa-map' | 'imperialism' | 'dossier';
 
 function AppContent() {
-  const [currentScene, setCurrentScene] = useState<SceneState>('intro');
+  const [currentScene, setCurrentScene] = useState<SceneState>('conference-room');
   const [showSources, setShowSources] = useState<boolean>(false);
-  const [showEntranceModal, setShowEntranceModal] = useState<boolean>(true);
+  const [showEntranceModal, setShowEntranceModal] = useState<boolean>(false);
   const [showLegalNotice, setShowLegalNotice] = useState<boolean>(false);
   const [targetHotspotId, setTargetHotspotId] = useState<string | null>(null);
 
@@ -171,6 +170,8 @@ function AppContent() {
             <ConferenceRoom
               initialTargetId={targetHotspotId}
               onNavigateToDossier={() => setCurrentScene('dossier')}
+              onNavigateToScene={(scene) => handleNavigateNav(scene)}
+              onClearInitialTarget={() => setTargetHotspotId(null)}
             />
           )}
 
@@ -196,36 +197,8 @@ function AppContent() {
 
           {/* Dossier & Full Educational Overview */}
           {currentScene === 'dossier' && (
-            <div className="pt-20 pb-24 space-y-16">
-              <div className="max-w-4xl mx-auto px-6 text-center space-y-3">
-                <span className="text-xs uppercase tracking-[0.3em] text-[#c4a46a] font-cinzel">
-                  Didaktisches Archiv
-                </span>
-                <h1 className="text-4xl sm:text-5xl font-garamond font-normal text-[#f5ebd9]">
-                  Historische Dokumentation &amp; Beschlüsse
-                </h1>
-                <p className="text-sm font-prose text-[#b3a189] max-w-2xl mx-auto leading-relaxed">
-                  Umfassende Aufarbeitung der 104 Verhandlungstage in Berlin, der völkerrechtlichen Verträge
-                  und der verheerenden Auswirkungen auf die afrikanischen Gesellschaften.
-                </p>
-                <div className="pt-3 flex items-center justify-center gap-3">
-                  <button
-                    onClick={handleBackToRoom}
-                    className="px-5 py-2 bg-[#251d16] hover:bg-[#34271c] text-[#edd9b9] text-xs font-cinzel rounded border border-[#c4a46a]/30 transition-colors cursor-pointer"
-                  >
-                    ← Zurück in den Konferenzsaal
-                  </button>
-                  <button
-                    onClick={() => setCurrentScene('africa-map')}
-                    className="px-5 py-2 bg-[#c4a46a] hover:bg-[#d8b87d] text-[#120e0b] text-xs font-cinzel font-bold rounded border border-[#e8d5b5] transition-colors cursor-pointer"
-                  >
-                    🗺️ Afrika-Karte (1880–1914) →
-                  </button>
-                </div>
-              </div>
-
+            <div className="pt-16 pb-24 w-full">
               <TimelineSection />
-              <EducationalSections />
             </div>
           )}
         </SceneTransition>

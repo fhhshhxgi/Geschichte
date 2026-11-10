@@ -30,81 +30,81 @@ export const COLONIAL_POWERS: Record<ColonialPowerId, ColonialPowerInfo> = {
   independent: {
     id: 'independent',
     name: 'Unabhängige afrikanische Staaten & Reiche',
-    color: '#d97706', // warm ochre / gold
-    borderColor: '#f59e0b',
-    badgeBg: 'rgba(217, 119, 6, 0.25)',
+    color: '#b8860b', // antique goldenrod
+    borderColor: '#e5b842',
+    badgeBg: 'rgba(184, 134, 11, 0.35)',
     flagSymbol: '👑',
     description: 'Souveräne afrikanische Königreiche, Kalifate und Stammesgesellschaften (z. B. Äthiopien, Sokoto, Ashanti, Dahomey, Zulu, Mossi, Mahdi-Sudan).'
   },
   britain: {
     id: 'britain',
     name: 'Großbritannien',
-    color: '#dc2626', // imperial red
-    borderColor: '#ef4444',
-    badgeBg: 'rgba(220, 38, 38, 0.25)',
+    color: '#8b263e', // antique royal crimson
+    borderColor: '#b23a48',
+    badgeBg: 'rgba(139, 38, 62, 0.35)',
     flagSymbol: '🇬🇧',
     description: 'Führende Kolonialmacht mit der Strategie einer zusammenhängenden Achse von Kairo nach Kapstadt sowie Kontrolle des unteren Nigerlaufs.'
   },
   france: {
     id: 'france',
     name: 'Frankreich',
-    color: '#2563eb', // royal blue
-    borderColor: '#3b82f6',
-    badgeBg: 'rgba(37, 99, 235, 0.25)',
+    color: '#253d5b', // antique prussian indigo
+    borderColor: '#3a5d84',
+    badgeBg: 'rgba(37, 61, 91, 0.35)',
     flagSymbol: '🇫🇷',
     description: 'Aufbau eines riesigen zusammenhängenden West- und Zentralafrika-Reichs (AOF / AEF) vom Mittelmeer bis zum Kongo-Fluss.'
   },
   germany: {
     id: 'germany',
     name: 'Deutsches Reich',
-    color: '#78350f', // imperial bronze/brown
-    borderColor: '#9a3412',
-    badgeBg: 'rgba(120, 53, 15, 0.35)',
+    color: '#3d4043', // imperial prussian slate
+    borderColor: '#c4a46a',
+    badgeBg: 'rgba(61, 64, 67, 0.35)',
     flagSymbol: '🇩🇪',
     description: 'Neuankömmling im imperialen Wettlauf; Bismarck erwarb 1884/85 Schutzgebiete in Südwestafrika, Kamerun, Togo und Ostafrika.'
   },
   belgium: {
     id: 'belgium',
     name: 'Belgien / Kongo-Freistaat (Leopold II.)',
-    color: '#9333ea', // imperial purple
-    borderColor: '#a855f7',
-    badgeBg: 'rgba(147, 51, 234, 0.25)',
+    color: '#6b1d2f', // deep blood ochre
+    borderColor: '#8e283d',
+    badgeBg: 'rgba(107, 29, 47, 0.35)',
     flagSymbol: '🇧🇪',
     description: 'Zunächst privates Ausbeutungsterritorium König Leopolds II. („Kongo-Freistaat“), 1908 nach internationalen Protesten vom belgischen Staat annektiert.'
   },
   portugal: {
     id: 'portugal',
     name: 'Portugal',
-    color: '#15803d', // emerald green
-    borderColor: '#22c55e',
-    badgeBg: 'rgba(21, 128, 61, 0.25)',
+    color: '#994d22', // burnt terracotta
+    borderColor: '#c06532',
+    badgeBg: 'rgba(153, 77, 34, 0.35)',
     flagSymbol: '🇵🇹',
     description: 'Älteste Kolonialmacht an den Küsten; scheiterte mit dem „Rosa-Karten-Plan“ (Verbindung von Angola und Mosambik) am britischen Ultimatum von 1890.'
   },
   italy: {
     id: 'italy',
     name: 'Italien',
-    color: '#0891b2', // teal/cyan
-    borderColor: '#06b6d4',
-    badgeBg: 'rgba(8, 145, 178, 0.25)',
+    color: '#4a5320', // antique olive drab
+    borderColor: '#6b772e',
+    badgeBg: 'rgba(74, 83, 32, 0.35)',
     flagSymbol: '🇮🇹',
     description: 'Junger Nationalstaat auf Kolonialsuche; unterwarf Eritrea und Somalia, scheiterte 1896 in Äthiopien bei Adwa und besetzte 1911 Libyen.'
   },
   spain: {
     id: 'spain',
     name: 'Spanien',
-    color: '#ca8a04', // mustard yellow
-    borderColor: '#eab308',
-    badgeBg: 'rgba(202, 138, 4, 0.25)',
+    color: '#96601b', // raw umber / antique sienna
+    borderColor: '#b87c29',
+    badgeBg: 'rgba(150, 96, 27, 0.35)',
     flagSymbol: '🇪🇸',
     description: 'Behielt historische Inseln und Enklaven in Westafrika (Río Muni / Spanisch-Guinea, Fernando Póo, Río de Oro / Westsahara).'
   },
   ottoman: {
     id: 'ottoman',
     name: 'Osmanisches Reich',
-    color: '#831843', // deep crimson
-    borderColor: '#9d174d',
-    badgeBg: 'rgba(131, 24, 67, 0.25)',
+    color: '#1d3b3a', // deep ottoman teal
+    borderColor: '#2e5b59',
+    badgeBg: 'rgba(29, 59, 58, 0.35)',
     flagSymbol: '🇹🇷',
     description: 'Historischer Oberherr Nordafrikas (Ägypten, Tripolitanien); verlor seinen Einfluss schrittweise an Großbritannien, Frankreich und Italien.'
   }

@@ -37,14 +37,14 @@ export interface DelegationHotspot {
 }
 
 export const CENTRAL_HOTSPOTS: DelegationHotspot[] = [
-  // 03. DEUTSCHES REICH – Bismarck (Center table head, standing/sitting under the wall map)
+  // 03. DEUTSCHES REICH – Bismarck (Center table head, sitting under the wall map)
   {
     id: 'germany',
     country: 'Deutsches Reich',
     representative: 'Otto von Bismarck',
     representativeTitle: 'Reichskanzler & Konferenzpräsident',
-    hotspotX: 50.0,
-    hotspotY: 35.5,
+    hotspotX: 49.2,
+    hotspotY: 43.5,
     sceneImage: '/images/03_deutsches_reich_bismarck.png',
     portraitImage: '/portraits/03_deutsches_reich_bismarck.png',
     shortDescription: 'Initiator und Leiter der Konferenz in der Reichskanzlei in der Berliner Wilhelmstraße.',
@@ -78,8 +78,8 @@ export const CENTRAL_HOTSPOTS: DelegationHotspot[] = [
     country: 'Großbritannien',
     representative: 'Sir Edward Malet',
     representativeTitle: 'Britischer Botschafter in Berlin',
-    hotspotX: 75.0,
-    hotspotY: 51.5,
+    hotspotX: 71.0,
+    hotspotY: 42.0,
     sceneImage: '/images/04_grossbritannien_edward_malet.png',
     portraitImage: '/portraits/04_grossbritannien_edward_malet.png',
     shortDescription: 'Mächtigste Kolonial- und Seemacht der Epoche mit Fokus auf Flusshandelswege und den Indischen Ozean.',
@@ -106,14 +106,14 @@ export const CENTRAL_HOTSPOTS: DelegationHotspot[] = [
     ]
   },
 
-  // 05. FRANKREICH – Baron Alphonse de Courcel (Left side of horseshoe table, seated opposite Malet)
+  // 05. FRANKREICH – Baron Alphonse de Courcel (Left side of table)
   {
     id: 'france',
     country: 'Frankreich',
     representative: 'Baron Alphonse de Courcel',
     representativeTitle: 'Französischer Botschafter in Berlin',
-    hotspotX: 28.0,
-    hotspotY: 52.5,
+    hotspotX: 20.0,
+    hotspotY: 47.0,
     sceneImage: '/images/05_frankreich_alphonse_de_courcel.png',
     portraitImage: '/portraits/05_frankreich_alphonse_de_courcel.png',
     shortDescription: 'Wichtigster Partner Bismarcks auf der Konferenz, bestrebt, ein riesiges Kolonialreich in Nord- und Westafrika zu konsolidieren.',
@@ -133,14 +133,14 @@ export const CENTRAL_HOTSPOTS: DelegationHotspot[] = [
     ]
   },
 
-  // 06. BELGIEN – Auguste Lambermont (Far right table foreground)
+  // 06. BELGIEN – Auguste Lambermont (Right table)
   {
     id: 'belgium',
     country: 'Belgien',
     representative: 'Baron Auguste Lambermont',
     representativeTitle: 'Generalsekretär des belgischen Außenministeriums & Chefunterhändler Leopolds II.',
-    hotspotX: 89.0,
-    hotspotY: 58.5,
+    hotspotX: 78.5,
+    hotspotY: 48.0,
     sceneImage: '/images/06_belgien_auguste_lambermont.png',
     portraitImage: '/portraits/06_belgien_auguste_lambermont.png',
     shortDescription: 'Tarnte das private imperiale Projekt König Leopolds II. als humanitäre Wissenschaftsmission und schuf den Kongo-Freistaat.',
@@ -160,14 +160,14 @@ export const CENTRAL_HOTSPOTS: DelegationHotspot[] = [
     ]
   },
 
-  // 07. PORTUGAL – Marquês de Penafiel & Serpa Pimentel (Right side, near Kapnist)
+  // 07. PORTUGAL – Marquês de Penafiel & Serpa Pimentel (Right background)
   {
     id: 'portugal',
     country: 'Portugal',
     representative: 'Marquês de Penafiel & Serpa Pimentel',
     representativeTitle: 'Gesandte des Königreichs Portugal',
-    hotspotX: 63.5,
-    hotspotY: 48.0,
+    hotspotX: 84.0,
+    hotspotY: 41.5,
     sceneImage: '/images/07_portugal_marquis_de_penafiel.png',
     portraitImage: '/portraits/07_portugal_marquis_de_penafiel.png',
     shortDescription: 'Älteste europäische Kolonialmacht an afrikanischen Küsten, deren historische Ansprüche verdrängt wurden.',
@@ -186,14 +186,14 @@ export const CENTRAL_HOTSPOTS: DelegationHotspot[] = [
     ]
   },
 
-  // 09. ÖSTERREICH-UNGARN – Emmerich Széchényi (Left-center, seated directly next to Bismarck)
+  // 09. ÖSTERREICH-UNGARN – Emmerich Széchényi (Left side of table)
   {
     id: 'austria-hungary',
     country: 'Österreich-Ungarn',
     representative: 'Graf Imre (Emmerich) Széchényi',
     representativeTitle: 'Botschafter Österreich-Ungarns in Berlin',
-    hotspotX: 44.0,
-    hotspotY: 39.5,
+    hotspotX: 27.0,
+    hotspotY: 41.5,
     sceneImage: '/images/09_oesterreich_ungarn_emmerich_szechenyi.png',
     portraitImage: '/portraits/09_oesterreich_ungarn_emmerich_szechenyi.png',
     shortDescription: 'Verlässlicher Verbündeter Bismarcks im Zweibund ohne eigene koloniale Ambitionen in Afrika.',
@@ -212,13 +212,13 @@ export const CENTRAL_HOTSPOTS: DelegationHotspot[] = [
     ]
   },
 
-  // 10. SPANIEN – Francisco Merry y Colom (Right side, behind Malet)
+  // 10. SPANIEN – Francisco Merry y Colom (Left rear)
   {
     id: 'spain',
     country: 'Spanien',
     representative: 'Francisco Merry y Colom',
     representativeTitle: 'Spanischer Gesandter in Berlin',
-    hotspotX: 79.5,
+    hotspotX: 14.5,
     hotspotY: 39.0,
     sceneImage: '/images/10_spanien_francisco_merry_y_colom.png',
     portraitImage: '/portraits/10_spanien_francisco_merry_y_colom.png',
@@ -233,18 +233,18 @@ export const CENTRAL_HOTSPOTS: DelegationHotspot[] = [
     consequences: 'Spanien sicherte sich Spanisch-Guinea und Spanisch-Sahara, blieb aber in Afrika ein Akteur zweiten Ranges im Schatten Frankreichs und Großbritanniens.',
     classification: 'Repräsentiert die Verteidigungsstrategie alter Kolonialmächte, die gegen die expansive Dynamik der neuen Industrienationen kaum bestehen konnten.',
     sources: [
-      { title: 'España en África: La política colonial española', institution: 'Archivo General de la Administración', year: '1992' },
+      { title: 'España en África: La política colonial española', institution: 'Archivo General de la Administration', year: '1992' },
       { title: 'Historia de la presencia española en África', institution: 'CSIC Madrid', year: '2001' }
     ]
   },
 
-  // 11. ITALIEN – Edoardo de Launay (Left table side, next to Széchényi)
+  // 11. ITALIEN – Edoardo de Launay (Right table side)
   {
     id: 'italien',
     country: 'Italien',
     representative: 'Graf Edoardo de Launay',
     representativeTitle: 'Italienischer Botschafter in Berlin',
-    hotspotX: 36.0,
+    hotspotX: 89.0,
     hotspotY: 46.5,
     sceneImage: '/images/11_italien_edoardo_de_launay.png',
     portraitImage: '/portraits/11_italien_edoardo_de_launay.png',
@@ -270,8 +270,8 @@ export const CENTRAL_HOTSPOTS: DelegationHotspot[] = [
     country: 'Niederlande',
     representative: 'Frederik van Bylandt & F. P. van der Hoeven',
     representativeTitle: 'Gesandte des Königreichs der Niederlande',
-    hotspotX: 14.0,
-    hotspotY: 59.0,
+    hotspotX: 8.0,
+    hotspotY: 45.0,
     sceneImage: '/images/12_niederlande_philip_van_der_hoeven.png',
     portraitImage: '/portraits/12_niederlande_philip_van_der_hoeven.png',
     shortDescription: 'Traditionsreiche Handelsnation mit bedeutenden Niederlassungen am Unterkongo.',
@@ -290,14 +290,14 @@ export const CENTRAL_HOTSPOTS: DelegationHotspot[] = [
     ]
   },
 
-  // 13. USA – John A. Kasson (Front left foreground table)
+  // 13. USA – John A. Kasson (Left table)
   {
     id: 'usa',
     country: 'USA',
     representative: 'John A. Kasson',
     representativeTitle: 'Gesandter der Vereinigten Staaten in Berlin',
-    hotspotX: 22.0,
-    hotspotY: 56.5,
+    hotspotX: 23.5,
+    hotspotY: 46.0,
     sceneImage: '/images/13_usa_john_a_kasson.png',
     portraitImage: '/portraits/13_usa_john_a_kasson.png',
     shortDescription: 'Erste Großmacht, die Leopolds Kongo-Organisation als souveränen Staat anerkannte.',
@@ -323,14 +323,14 @@ export const CENTRAL_HOTSPOTS: DelegationHotspot[] = [
     ]
   },
 
-  // 14. DÄNEMARK – Emil Vind (Left table rear)
+  // 14. DÄNEMARK – Emil Vind (Foreground left table)
   {
     id: 'denmark',
     country: 'Dänemark',
     representative: 'Carl Emil Vind',
     representativeTitle: 'Dänischer Gesandter in Berlin',
-    hotspotX: 18.5,
-    hotspotY: 41.5,
+    hotspotX: 13.5,
+    hotspotY: 74.0,
     sceneImage: '/images/14_daenemark_emil_vind.png',
     portraitImage: '/portraits/14_daenemark_emil_vind.png',
     shortDescription: 'Neutrale seefahrende Nation mit Fokus auf Handelsfreiheit und humanitäre Klauseln.',
@@ -348,14 +348,14 @@ export const CENTRAL_HOTSPOTS: DelegationHotspot[] = [
     ]
   },
 
-  // 15. RUSSLAND – Pyotr Kapnist (Right-center, sitting right of Bismarck)
+  // 15. RUSSLAND – Pyotr Kapnist (Left of Bismarck, writing at table)
   {
     id: 'russia',
     country: 'Russland',
     representative: 'Graf Pyotr Kapnist',
     representativeTitle: 'Kaiserlich Russischer Gesandter',
-    hotspotX: 56.5,
-    hotspotY: 39.5,
+    hotspotX: 34.5,
+    hotspotY: 43.5,
     sceneImage: '/images/15_russland_pyotr_kapnist.png',
     portraitImage: '/portraits/15_russland_pyotr_kapnist.png',
     shortDescription: 'Kontinentale Großmacht mit Fokus auf Zentralasien und die Meerengen im Schwarzen Meer.',
@@ -374,14 +374,14 @@ export const CENTRAL_HOTSPOTS: DelegationHotspot[] = [
     ]
   },
 
-  // 16. SCHWEDEN-NORWEGEN – Gillis Bildt (Far right side)
+  // 16. SCHWEDEN-NORWEGEN – Gillis Bildt (Military officer right of Bismarck)
   {
     id: 'sweden-norway',
     country: 'Schweden-Norwegen',
     representative: 'Freiherr Gillis Bildt',
     representativeTitle: 'Schwedisch-Norwegischer Gesandter in Berlin',
-    hotspotX: 84.0,
-    hotspotY: 54.0,
+    hotspotX: 62.5,
+    hotspotY: 43.0,
     sceneImage: '/images/16_schweden_norwegen_gillis_bildt.png',
     portraitImage: '/portraits/16_schweden_norwegen_gillis_bildt.png',
     shortDescription: 'Große Handelsflotte mit Interesse an ungehindertem Schiffsverkehr entlang der westafrikanischen Küste.',
@@ -399,14 +399,14 @@ export const CENTRAL_HOTSPOTS: DelegationHotspot[] = [
     ]
   },
 
-  // 17. OSMANISCHES REICH – Mehmed Said Pasha (Front right foreground, distinctive red Fez)
+  // 17. OSMANISCHES REICH – Mehmed Said Pasha (Far right foreground, distinctive red Fez)
   {
     id: 'ottoman',
     country: 'Osmanisches Reich',
     representative: 'Mehmed Said Pasha',
     representativeTitle: 'Botschafter der Hohen Pforte in Berlin',
-    hotspotX: 69.5,
-    hotspotY: 47.5,
+    hotspotX: 94.0,
+    hotspotY: 43.5,
     sceneImage: '/images/17_osmanisches_reich_mehmed_said_pasha.png',
     portraitImage: '/portraits/17_osmanisches_reich_mehmed_said_pasha.png',
     shortDescription: 'Einziger Staat aus dem islamischen Kulturkreis, dessen formale Oberhoheit in Nordafrika zunehmend ignoriert wurde.',
@@ -432,7 +432,7 @@ export const CENTRAL_HOTSPOTS: DelegationHotspot[] = [
     representative: 'Kein afrikanischer Vertreter',
     representativeTitle: 'Symbolische didaktische Leerstelle am Konferenztisch',
     hotspotX: 50.0,
-    hotspotY: 76.0,
+    hotspotY: 78.0,
     sceneImage: '/images/02_leerer_platz_symbolisch.png',
     portraitImage: '',
     isSymbolic: true,
@@ -458,8 +458,8 @@ export const CENTRAL_HOTSPOTS: DelegationHotspot[] = [
     country: 'Afrika-Wandkarte',
     representative: 'Die Projektionsfläche der Aufteilung',
     representativeTitle: 'Historische Wandkarte im Sitzungssaal der Reichskanzlei',
-    hotspotX: 50.0,
-    hotspotY: 17.0,
+    hotspotX: 49.5,
+    hotspotY: 20.0,
     sceneImage: '/images/08_afrika_karte_stilisiert.png',
     portraitImage: '',
     isMap: true,

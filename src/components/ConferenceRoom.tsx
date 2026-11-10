@@ -6,19 +6,76 @@ import { MapRegion } from '../types/conference';
 import { InteractiveHotspot } from './InteractiveHotspot';
 import { CountryFlag } from './CountryFlag';
 import { InteractiveAfricaMap } from './InteractiveAfricaMap';
+import { EmptyChairExhibit } from './EmptyChairExhibit';
 import { useCinemaFrame } from '../utils/useCinemaFrame';
 import { soundFx } from '../utils/soundEffects';
 import { useAssets } from '../context/AssetContext';
 
 const DELEGATES = CENTRAL_HOTSPOTS.filter((h) => !h.isSymbolic && !h.isMap);
 
+const TOUR_STATIONS = [
+  {
+    targetId: 'germany',
+    stepNumber: 1,
+    title: 'Otto von Bismarck · Deutsches Reich',
+    subtitle: 'Reichskanzler & Konferenzpräsident',
+    summary: 'Bismarck eröffnet die Konferenz in der Wilhelmstraße 77. Vorgeblich als neutraler „ehrlicher Makler“ zur friedlichen Einigung – in Wahrheit zur Ablenkung Frankreichs von Revancheplänen nach 1871.',
+    quote: '„Alle Regierungen teilen den Wunsch, die Eingeborenen Afrikas an die Zivilisation heranzuführen...“',
+  },
+  {
+    targetId: 'map',
+    stepNumber: 2,
+    title: 'Die Wandkarte von Afrika',
+    subtitle: 'Das Lineal über einen Kontinent',
+    summary: 'Direkt im Rücken der Konferenzleitung hängt die riesige Projektionsfläche. Hier zogen europäische Diplomaten über 30.000 Kilometer künstlicher Grenzen quer durch indigene Reiche.',
+    quote: '„Wir zogen Linien auf Karten von Ländern, über die wir kaum etwas wussten.“ — Lord Salisbury',
+  },
+  {
+    targetId: 'belgium',
+    stepNumber: 3,
+    title: 'König Leopold II. & Belgien',
+    subtitle: 'Humanitäre Maske für privaten Terror',
+    summary: 'Baron Lambermont erwirkt die völkerrechtliche Anerkennung des Kongo-Freistaats als persönliches Privateigentum Leopolds II. – mit der Folge von bis zu 10 Millionen Toten beim Kautschukraub.',
+    quote: '„Ich will meinen Anteil an diesem herrlichen afrikanischen Kuchen nicht verpassen.“ — Leopold II.',
+  },
+  {
+    targetId: 'britain',
+    stepNumber: 4,
+    title: 'Sir Edward Malet · Großbritannien',
+    subtitle: 'Die Vormacht der Fluss- und Seewege',
+    summary: 'Großbritannien blockiert internationale Einmischung auf dem schiffbaren Niger und festigt die strategische Achse Ägypten–Südafrika („Kap-Kairo-Linie“).',
+    quote: '„Großbritannien garantiert seit Jahrzehnten Handel und Ordnung auf diesen Gewässern.“',
+  },
+  {
+    targetId: 'france',
+    stepNumber: 5,
+    title: 'Baron de Courcel · Frankreich',
+    subtitle: 'Konsolidierung in West- & Zentralafrika',
+    summary: 'Frankreich sichert sich den riesigen Sahel- und Äquatorraum und erwirbt das vertragliche Vorkaufsrecht auf den Kongo, falls Leopolds Privatgesellschaft scheitern sollte.',
+    quote: '„Eine deutsch-französische Einigung gegen britische Alleingänge.“',
+  },
+  {
+    targetId: 'absence',
+    stepNumber: 6,
+    title: 'Der Leere Stuhl · Afrika',
+    subtitle: 'Die fundamentale historische Ungerechtigkeit',
+    summary: '14 Mächte verhandeln über das Schicksal von über 250 Millionen Menschen. Kein einziger afrikanischer Vertreter ist eingeladen. Afrika wird juristisch zur „Terra Nullius“ deklariert.',
+    quote: '„Man sprach über uns, ohne uns. Als existierten wir auf unserem eigenen Kontinent nicht.“',
+  },
+];
+
 interface ConferenceRoomProps {
   initialTargetId?: string | null;
   onNavigateToDossier?: () => void;
+  onNavigateToScene?: (scene: 'conference-room' | 'africa-absence' | 'africa-map' | 'imperialism' | 'dossier') => void;
+  onClearInitialTarget?: () => void;
 }
 
 export const ConferenceRoom: React.FC<ConferenceRoomProps> = ({
   initialTargetId = null,
+  onNavigateToDossier,
+  onNavigateToScene,
+  onClearInitialTarget,
 }) => {
   const containerRef = useRef<HTMLDivElement>(null);
   const [mouseOffset, setMouseOffset] = useState({ x: 0, y: 0 });
@@ -29,17 +86,23 @@ export const ConferenceRoom: React.FC<ConferenceRoomProps> = ({
   const [activeTab, setActiveTab] = useState<'uebersicht' | 'interessen' | 'folgen' | 'quellen'>('uebersicht');
   const [isPortraitLightbox, setIsPortraitLightbox] = useState<boolean>(false);
 
+  // Guided Tour & Filter Controls
+  const [filterCategory, setFilterCategory] = useState<'all' | 'powers' | 'chair' | 'map'>('all');
+  const [isTourActive, setIsTourActive] = useState<boolean>(false);
+  const [tourStep, setTourStep] = useState<number>(0);
+  const [showPins, setShowPins] = useState<boolean>(true);
+
   // Empty chair deep-dive modal state
   const [activeAbsenceModal, setActiveAbsenceModal] = useState<'terranullius' | 'widerstand' | 'arbeit' | 'voelkermord' | null>(null);
 
   // Africa map region drawer state
   const [selectedMapRegion, setSelectedMapRegion] = useState<MapRegion | null>(null);
 
-  // Responsive cinema frame calculation
+  // Responsive widescreen cinema frame calculation for 1376:768 master photo
   const { dimensions } = useCinemaFrame({
-    aspectRatio: 16 / 9,
-    reservedTop: 56,
-    reservedBottom: 76,
+    aspectRatio: 1376 / 768,
+    reservedTop: 60,
+    reservedBottom: 80,
     horizontalPadding: 16,
     verticalPadding: 8,
   });
@@ -83,6 +146,7 @@ export const ConferenceRoom: React.FC<ConferenceRoomProps> = ({
     setSelectedMapRegion(null);
     setActiveAbsenceModal(null);
     setIsPortraitLightbox(false);
+    if (onClearInitialTarget) onClearInitialTarget();
   };
 
   const currentDelegateIndex = activeTarget && !activeTarget.isSymbolic && !activeTarget.isMap
@@ -168,68 +232,277 @@ export const ConferenceRoom: React.FC<ConferenceRoomProps> = ({
       {/* 
         MAIN CONTENT STAGE
       */}
-      <div className="relative flex-1 w-full flex items-center justify-center p-2 min-h-0">
+      <div className="relative flex-1 w-full flex flex-col items-center justify-center p-2 min-h-0">
         {/* ======================================================== */}
         {/* MODE A: FULL CONFERENCE ROOM OVERVIEW (Idle table view)   */}
         {/* ======================================================== */}
         {!activeTarget && (
-          <motion.div
-            key="room-overview"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1, x: mouseOffset.x, y: mouseOffset.y }}
-            exit={{ opacity: 0 }}
-            transition={{ duration: 0.3 }}
-            style={{
-              width: dimensions.width > 0 ? `${dimensions.width}px` : '100%',
-              height: dimensions.height > 0 ? `${dimensions.height}px` : 'auto',
-              aspectRatio: '16/9',
-            }}
-            className="relative max-w-full max-h-full flex items-center justify-center shadow-2xl rounded-sm overflow-hidden bg-[#120e0a]"
-          >
-            {/* Master Conference Room Scene */}
-            <img
-              src={getImageUrl('/images/01_start_konferenzraum.png')}
-              alt="Die Berliner Konferenz 1884 im Konferenzsaal der Reichskanzlei"
-              className="w-full h-full object-fill pointer-events-none select-none block"
-              referrerPolicy="no-referrer"
-              loading="eager"
-            />
-
-            {/* Atmosphere */}
-            <div className="absolute inset-0 pointer-events-none film-grain" />
-            <div className="absolute inset-0 pointer-events-none vignette-subtle" />
-
-            {/* Interactive Hotspots for all 14 delegations, chair, map */}
-            <div className="absolute inset-0 pointer-events-auto">
-              {CENTRAL_HOTSPOTS.map((hotspot) => (
-                <InteractiveHotspot
-                  key={`room-hotspot-${hotspot.id}`}
-                  hotspot={{
-                    id: hotspot.id,
-                    label: hotspot.country,
-                    subLabel: hotspot.representative
-                      ? `${hotspot.representative} · ${hotspot.representativeTitle}`
-                      : hotspot.shortDescription,
-                    x: hotspot.hotspotX,
-                    y: hotspot.hotspotY,
-                    hotspotX: hotspot.hotspotX,
-                    hotspotY: hotspot.hotspotY,
-                    sceneImage: hotspot.sceneImage,
-                    portraitImage: hotspot.portraitImage,
-                    targetScene: hotspot.isSymbolic
-                      ? 'africa-absence'
-                      : hotspot.isMap
-                      ? 'africa-map'
-                      : 'country',
-                    countryId: !hotspot.isSymbolic && !hotspot.isMap ? hotspot.id : undefined,
-                    isSymbolic: hotspot.isSymbolic,
-                    isMap: hotspot.isMap,
+          <>
+            {/* Top Toolbar Ribbon for Chamber */}
+            <div className="w-full max-w-5xl mx-auto mb-2 flex items-center justify-between gap-2 px-2 z-30 flex-wrap">
+              {/* Filter Tabs */}
+              <div className="flex items-center gap-1 bg-[#15100b]/90 backdrop-blur-md p-1 rounded-md border border-[#3e3428]/80 text-[11px] font-serif">
+                <button
+                  onClick={() => {
+                    soundFx.playSubtleTick();
+                    setFilterCategory('all');
                   }}
-                  onClick={() => handleSelectTarget(hotspot)}
-                />
-              ))}
+                  className={`px-2.5 py-1 rounded transition-colors cursor-pointer ${
+                    filterCategory === 'all'
+                      ? 'bg-[#c4a46a] text-[#120d09] font-bold shadow-xs'
+                      : 'text-[#baa791] hover:text-[#f5ebd9]'
+                  }`}
+                >
+                  Alle (16)
+                </button>
+                <button
+                  onClick={() => {
+                    soundFx.playSubtleTick();
+                    setFilterCategory('powers');
+                  }}
+                  className={`px-2.5 py-1 rounded transition-colors cursor-pointer ${
+                    filterCategory === 'powers'
+                      ? 'bg-[#c4a46a] text-[#120d09] font-bold shadow-xs'
+                      : 'text-[#baa791] hover:text-[#f5ebd9]'
+                  }`}
+                >
+                  👑 Großmächte
+                </button>
+                <button
+                  onClick={() => {
+                    soundFx.playSubtleTick();
+                    setFilterCategory('chair');
+                  }}
+                  className={`px-2.5 py-1 rounded transition-colors cursor-pointer ${
+                    filterCategory === 'chair'
+                      ? 'bg-[#f59e0b] text-[#120d09] font-bold shadow-xs'
+                      : 'text-[#f59e0b] hover:text-[#fde68a]'
+                  }`}
+                >
+                  🪑 Leerer Stuhl
+                </button>
+                <button
+                  onClick={() => {
+                    soundFx.playSubtleTick();
+                    setFilterCategory('map');
+                  }}
+                  className={`px-2.5 py-1 rounded transition-colors cursor-pointer ${
+                    filterCategory === 'map'
+                      ? 'bg-[#60a5fa] text-[#120d09] font-bold shadow-xs'
+                      : 'text-[#93c5fd] hover:text-[#dbeafe]'
+                  }`}
+                >
+                  🗺️ Wandkarte
+                </button>
+              </div>
+
+              {/* Action Buttons: Tour & Pins Toggle */}
+              <div className="flex items-center gap-2">
+                <button
+                  onClick={() => {
+                    soundFx.playChamberTone(!isTourActive);
+                    setIsTourActive(!isTourActive);
+                    if (!isTourActive) {
+                      setTourStep(0);
+                    }
+                  }}
+                  className={`px-3 py-1 rounded-md text-xs font-cinzel transition-all cursor-pointer border flex items-center gap-1.5 shadow-md ${
+                    isTourActive
+                      ? 'bg-[#f59e0b] text-[#140e08] border-[#fde68a] font-bold shadow-[0_0_15px_rgba(245,158,11,0.5)]'
+                      : 'bg-[#1e1711] text-[#c4a46a] hover:text-[#fff] border-[#c4a46a]/60 hover:bg-[#2c2016]'
+                  }`}
+                >
+                  <span>{isTourActive ? '✕' : '🎬'}</span>
+                  <span>{isTourActive ? 'Tour beenden' : 'Geführte Chronik-Tour'}</span>
+                </button>
+
+                <button
+                  onClick={() => setShowPins(!showPins)}
+                  className="px-2.5 py-1 rounded-md text-xs font-serif bg-[#15100b]/80 hover:bg-[#201812] text-[#baa791] hover:text-[#f5ebd9] border border-[#3e3428] transition-colors cursor-pointer"
+                  title={showPins ? 'Pins ausblenden' : 'Pins einblenden'}
+                >
+                  {showPins ? '👁️ Pins ausblenden' : '👁️ Pins einblenden'}
+                </button>
+              </div>
             </div>
-          </motion.div>
+
+            {/* Master Conference Room Stage */}
+            <motion.div
+              key="room-overview"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1, x: mouseOffset.x, y: mouseOffset.y }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 0.3 }}
+              style={{
+                width: dimensions.width > 0 ? `${dimensions.width}px` : '100%',
+                height: dimensions.height > 0 ? `${dimensions.height}px` : 'auto',
+                aspectRatio: '1376 / 768',
+              }}
+              className="relative max-w-full max-h-full flex items-center justify-center shadow-2xl rounded-sm overflow-hidden bg-[#120e0a]"
+            >
+              {/* Master Conference Room Scene: User Attached Authentic Artwork */}
+              <img
+                src={getImageUrl('/start.png')}
+                onError={(e) => {
+                  const target = e.target as HTMLImageElement;
+                  if (!target.src.includes('01_start_konferenzraum.png')) {
+                    target.src = getImageUrl('/images/01_start_konferenzraum.png');
+                  }
+                }}
+                alt="Die Berliner Konferenz 1884 im Konferenzsaal der Reichskanzlei"
+                className="w-full h-full object-cover pointer-events-none select-none block"
+                referrerPolicy="no-referrer"
+                loading="eager"
+              />
+
+              {/* Atmosphere */}
+              <div className="absolute inset-0 pointer-events-none film-grain" />
+              <div className="absolute inset-0 pointer-events-none vignette-subtle" />
+
+              {/* Guided Tour Spotlight Overlay */}
+              {isTourActive && (
+                <div className="absolute inset-0 bg-black/40 pointer-events-none transition-opacity duration-500" />
+              )}
+
+              {/* Interactive Hotspots for all 14 delegations, chair, map */}
+              {showPins && (
+                <div className="absolute inset-0 pointer-events-auto">
+                  {CENTRAL_HOTSPOTS.filter((hotspot) => {
+                    if (filterCategory === 'powers') {
+                      return ['germany', 'britain', 'france', 'belgium', 'portugal', 'absence', 'map'].includes(hotspot.id);
+                    }
+                    if (filterCategory === 'chair') {
+                      return hotspot.isSymbolic;
+                    }
+                    if (filterCategory === 'map') {
+                      return hotspot.isMap;
+                    }
+                    return true;
+                  }).map((hotspot) => {
+                    const isTourHighlighted = isTourActive && TOUR_STATIONS[tourStep]?.targetId === hotspot.id;
+
+                    return (
+                      <div
+                        key={`room-hotspot-wrapper-${hotspot.id}`}
+                        className={`transition-all duration-300 ${
+                          isTourActive && !isTourHighlighted ? 'opacity-30 scale-90' : 'opacity-100 scale-100'
+                        }`}
+                      >
+                        {isTourHighlighted && (
+                          <div
+                            style={{
+                              left: `${hotspot.hotspotX}%`,
+                              top: `${hotspot.hotspotY}%`,
+                            }}
+                            className="absolute -translate-x-1/2 -translate-y-1/2 w-20 h-20 rounded-full bg-[#f59e0b]/30 border-2 border-[#f59e0b] animate-ping pointer-events-none z-30"
+                          />
+                        )}
+                        <InteractiveHotspot
+                          hotspot={{
+                            id: hotspot.id,
+                            label: hotspot.country,
+                            subLabel: hotspot.representative
+                              ? `${hotspot.representative} · ${hotspot.representativeTitle}`
+                              : hotspot.shortDescription,
+                            x: hotspot.hotspotX,
+                            y: hotspot.hotspotY,
+                            hotspotX: hotspot.hotspotX,
+                            hotspotY: hotspot.hotspotY,
+                            sceneImage: hotspot.sceneImage,
+                            portraitImage: hotspot.portraitImage,
+                            targetScene: hotspot.isSymbolic
+                              ? 'africa-absence'
+                              : hotspot.isMap
+                              ? 'africa-map'
+                              : 'country',
+                            countryId: !hotspot.isSymbolic && !hotspot.isMap ? hotspot.id : undefined,
+                            isSymbolic: hotspot.isSymbolic,
+                            isMap: hotspot.isMap,
+                          }}
+                          onClick={() => handleSelectTarget(hotspot)}
+                        />
+                      </div>
+                    );
+                  })}
+                </div>
+              )}
+            </motion.div>
+
+            {/* Floating Guided Tour Card at Bottom */}
+            <AnimatePresence>
+              {isTourActive && (
+                <motion.div
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: 20 }}
+                  className="fixed bottom-16 sm:bottom-18 left-3 right-3 sm:left-auto sm:right-6 sm:max-w-md z-40 bg-[#120d09]/95 backdrop-blur-xl border-2 border-[#f59e0b]/80 rounded-xl p-4 shadow-[0_10px_40px_rgba(0,0,0,0.9)] text-[#edd9b9]"
+                >
+                  <div className="flex items-center justify-between border-b border-[#3b2b1b] pb-2 mb-2">
+                    <span className="text-[10px] uppercase tracking-[0.25em] text-[#f59e0b] font-cinzel font-bold">
+                      Station {tourStep + 1} von {TOUR_STATIONS.length}
+                    </span>
+                    <button
+                      onClick={() => setIsTourActive(false)}
+                      className="text-xs text-[#a89680] hover:text-[#fff] cursor-pointer"
+                    >
+                      ✕
+                    </button>
+                  </div>
+
+                  <h4 className="text-base font-garamond font-bold text-[#f5ebd9] leading-snug">
+                    {TOUR_STATIONS[tourStep].title}
+                  </h4>
+                  <p className="text-[11px] font-cinzel text-[#c4a46a] mt-0.5">
+                    {TOUR_STATIONS[tourStep].subtitle}
+                  </p>
+                  <p className="text-xs font-prose text-[#d1c2af] mt-2 leading-relaxed">
+                    {TOUR_STATIONS[tourStep].summary}
+                  </p>
+                  <p className="text-[11px] font-serif italic text-[#fde68a] mt-1.5 p-2 bg-[#1d140b] rounded border-l-2 border-[#f59e0b]">
+                    {TOUR_STATIONS[tourStep].quote}
+                  </p>
+
+                  <div className="flex items-center justify-between gap-2 mt-3 pt-2 border-t border-[#3b2b1b]">
+                    <div className="flex items-center gap-1.5">
+                      <button
+                        disabled={tourStep === 0}
+                        onClick={() => {
+                          soundFx.playSubtleTick();
+                          setTourStep((prev) => Math.max(0, prev - 1));
+                        }}
+                        className="px-2.5 py-1 text-xs rounded bg-[#1e1610] hover:bg-[#2c2016] text-[#c4a46a] disabled:opacity-30 disabled:pointer-events-none cursor-pointer border border-[#3e3224]"
+                      >
+                        ◀ Zurück
+                      </button>
+                      <button
+                        onClick={() => {
+                          soundFx.playSubtleTick();
+                          if (tourStep < TOUR_STATIONS.length - 1) {
+                            setTourStep((prev) => prev + 1);
+                          } else {
+                            setIsTourActive(false);
+                          }
+                        }}
+                        className="px-3 py-1 text-xs rounded bg-[#f59e0b] hover:bg-[#d97706] text-[#140e08] font-bold cursor-pointer"
+                      >
+                        {tourStep < TOUR_STATIONS.length - 1 ? 'Weiter ▶' : 'Fertig ✓'}
+                      </button>
+                    </div>
+
+                    <button
+                      onClick={() => {
+                        const target = CENTRAL_HOTSPOTS.find((h) => h.id === TOUR_STATIONS[tourStep].targetId);
+                        if (target) handleSelectTarget(target);
+                      }}
+                      className="px-2.5 py-1 text-xs rounded text-[#f5ebd9] bg-[#291b10] hover:bg-[#382618] border border-[#c4a46a]/60 cursor-pointer font-cinzel"
+                    >
+                      Dossier öffnen →
+                    </button>
+                  </div>
+                </motion.div>
+              )}
+            </AnimatePresence>
+          </>
         )}
 
         {/* ======================================================== */}
@@ -452,78 +725,28 @@ export const ConferenceRoom: React.FC<ConferenceRoomProps> = ({
         )}
 
         {/* ======================================================== */}
-        {/* MODE C: EMPTY CHAIR SCENE (Symbolic Africa Absence)       */}
+        {/* MODE C: CINEMATIC SPOTLIGHT: DER LEERE STUHL (ABWESENHEIT)*/}
         {/* ======================================================== */}
         {activeTarget && activeTarget.isSymbolic && (
-          <motion.div
-            key="empty-chair-scene"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            style={{
-              width: dimensions.width > 0 ? `${dimensions.width}px` : '100%',
-              height: dimensions.height > 0 ? `${dimensions.height}px` : 'auto',
-              aspectRatio: '16/9',
+          <EmptyChairExhibit
+            onBackToRoom={handleReturnToRoom}
+            onOpenMap={() => {
+              if (onNavigateToScene) {
+                onNavigateToScene('africa-map');
+              } else {
+                handleReturnToRoom();
+                const mapHotspot = CENTRAL_HOTSPOTS.find((h) => h.isMap);
+                if (mapHotspot) handleSelectTarget(mapHotspot);
+              }
             }}
-            className="relative max-w-full max-h-full flex items-center justify-center shadow-2xl rounded-sm overflow-hidden bg-[#120e0a]"
-          >
-            <img
-              src={getImageUrl('/images/02_leerer_platz_symbolisch.png')}
-              alt="Leerer Stuhl – Afrikas Abwesenheit"
-              className="w-full h-full object-fill pointer-events-none select-none block"
-            />
-            <div className="absolute inset-0 pointer-events-none film-grain" />
-
-            {/* Solemn African Absence Overlay */}
-            <div className="absolute inset-x-4 bottom-4 sm:bottom-8 z-30 max-w-2xl mx-auto pointer-events-auto">
-              <div className="archival-panel p-5 sm:p-7 rounded border border-[#f59e0b]/50 shadow-2xl backdrop-blur-xl bg-[#0e0906]/95 text-center space-y-3">
-                <span className="text-[11px] uppercase tracking-[0.35em] text-[#f59e0b] font-cinzel block">
-                  Symbolische Didaktische Leerstelle
-                </span>
-                <h1 className="text-2xl sm:text-3xl font-garamond font-normal text-[#f5ebd9] leading-tight">
-                  Wer fehlt an diesem Tisch?
-                </h1>
-                <p className="text-xs sm:text-sm font-prose text-[#d8c8b4] leading-relaxed max-w-xl mx-auto">
-                  Auf der Berliner Konferenz 1884/85 verhandelten 14 europäische und westliche Staaten
-                  über die Aufteilung des afrikanischen Kontinents.
-                  <strong> Kein einziger afrikanischer Herrscher, Diplomat oder Vertreter war geladen oder anwesend.</strong>
-                </p>
-
-                {/* Didactic Clarification */}
-                <div className="p-3 bg-[#17110b] rounded border border-[#f59e0b]/30 text-left text-[11px] font-prose text-[#baa78f] leading-relaxed">
-                  <strong className="text-[#f59e0b] font-cinzel block mb-0.5">Wichtige Klarstellung:</strong>
-                  Der leere Stuhl ist eine didaktisch-symbolische Visualisierung der Nicht-Beteiligung Afrikas
-                  und war kein historisch dokumentierter offizieller „Afrika-Sitzplatz“ im Sitzungssaal der Reichskanzlei.
-                </div>
-
-                {/* Deep-dive topic buttons */}
-                <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 pt-1 text-left">
-                  {[
-                    { id: 'terranullius', label: 'Terra Nullius', sub: 'Rechtliche Fiktion' },
-                    { id: 'widerstand', label: 'Widerstand', sub: 'Maji-Maji & mehr' },
-                    { id: 'arbeit', label: 'Zwangsarbeit', sub: 'Kongo-Gräuel' },
-                    { id: 'voelkermord', label: 'Völkermord', sub: 'Herero & Nama' },
-                  ].map((item) => (
-                    <button
-                      key={`absence-topic-${item.id}`}
-                      onClick={() => {
-                        soundFx.playSubtleTick();
-                        setActiveAbsenceModal(item.id as typeof activeAbsenceModal);
-                      }}
-                      className="p-2 sm:p-2.5 bg-[#17120e]/95 hover:bg-[#251d16] border border-[#f59e0b]/30 hover:border-[#f59e0b] rounded transition-all cursor-pointer shadow-lg active:scale-95 min-h-[44px]"
-                    >
-                      <p className="text-xs font-cinzel text-[#f5ebd9] font-medium leading-tight">
-                        {item.label}
-                      </p>
-                      <p className="text-[10px] text-[#9c8973] font-serif mt-0.5 truncate">
-                        {item.sub}
-                      </p>
-                    </button>
-                  ))}
-                </div>
-              </div>
-            </div>
-          </motion.div>
+            onOpenImperialism={() => {
+              if (onNavigateToScene) {
+                onNavigateToScene('imperialism');
+              } else if (onNavigateToDossier) {
+                onNavigateToDossier();
+              }
+            }}
+          />
         )}
 
         {/* ======================================================== */}

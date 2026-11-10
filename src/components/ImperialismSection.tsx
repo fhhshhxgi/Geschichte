@@ -1,33 +1,22 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { soundFx } from '../utils/soundEffects';
-import { ImperialismTradeDashboard } from './ImperialismTradeDashboard';
 
 interface ImperialismSectionProps {
   onOpenMap?: () => void;
   onOpenConferenceRoom?: () => void;
 }
 
+type TabType = 'vergleich' | 'raubbau' | 'grenzen' | 'widerstand';
+
 export const ImperialismSection: React.FC<ImperialismSectionProps> = ({
   onOpenMap,
   onOpenConferenceRoom,
 }) => {
-  const [activeTab, setActiveTab] = useState<'rohstoffe' | 'entlarver' | 'lineal' | 'widerstand' | 'handelsströme'>('rohstoffe');
-
-  // Rohstoff-Labor State
+  const [activeTab, setActiveTab] = useState<TabType>('vergleich');
   const [selectedResource, setSelectedResource] = useState<number>(0);
-  const [resourcePerspective, setResourcePerspective] = useState<'europe' | 'africa'>('africa');
-
-  // Mythos vs Reality State
-  const [activeMythIdx, setActiveMythIdx] = useState<number>(0);
-  const [isFlipped, setIsFlipped] = useState<boolean>(false);
-
-  // Border Ruler Simulator State
-  const [activeBorderCase, setActiveBorderCase] = useState<number>(0);
-  const [rulerPosition, setRulerPosition] = useState<number>(50);
-
-  // Resistance Filter
-  const [resistanceFilter, setResistanceFilter] = useState<'all' | 'victory' | 'resistance'>('all');
+  const [selectedBorderCase, setSelectedBorderCase] = useState<number>(0);
+  const [compareYear, setCompareYear] = useState<1884 | 1914>(1884);
 
   const RESOURCES = [
     {
@@ -35,190 +24,147 @@ export const ImperialismSection: React.FC<ImperialismSectionProps> = ({
       name: 'Wildkautschuk',
       icon: '🩸',
       region: 'Kongo-Freistaat & Französisch-Kongo',
-      tag: 'Kautschukboom nach 1888',
-      tollBadge: 'Bis zu 10 Mio. Tote',
-      europeUse: 'Dunlops Erfindung des Luftreifens (1888) für Fahrräder/Autos und Dichtungen für europäische Dampfmaschinen.',
-      africaReality: 'Force-Publique-Terror: Verfehlte Dörfer erhielten Geiselnahmen, abgehackte Hände und Massenhinrichtungen.',
-      keyFact: 'König Leopold II. erwirtschaftete hunderte Millionen Goldfranken Reingewinn für persönliche Prachtbauten in Brüssel.',
-      stat: '50% Bevölkerungsverlust im Kongobecken',
+      tag: 'Kautschukboom nach Dunlops Reifenpatent (1888)',
+      europeDemand: 'Aufstieg der Automobil-, Fahrrad- und Elektroindustrie. Gummireifen, Dichtungen für Dampfmaschinen und Telegrafenkabel-Isolierung erforderten gigantische Mengen Gummi.',
+      africaReality: 'Die Force Publique (Privatarmee Leopolds II.) verhängte grausame Erntequoten: Bei Nichterfüllung wurden Frauen und Kinder als Geiseln genommen, Dörfer niedergebrannt und den Arbeitern die Hände abgehackt.',
+      devastation: 'Bis zu 10 Millionen Menschen starben im Kongobecken an Zwangsarbeit, Geiselhaft, Erschöpfung und Gräueltaten. Die Bevölkerung ganzer Provinzen halbierte sich.',
+      beneficiary: 'König Leopold II. erwirtschaftete hunderte Millionen Goldfranken Reingewinn für persönliche Monumentalbauten in Brüssel und Ostende.',
     },
     {
       id: 'gold-diamonds',
       name: 'Gold & Diamanten',
       icon: '💎',
       region: 'Südafrika (Kimberley & Witwatersrand)',
-      tag: 'Weltgrößte Minenanlagen',
-      tollBadge: 'Apartheid-Ursprung (1913)',
-      europeUse: 'Finanzierung des internationalen Goldstandards der Bank of England und Luxusschmuck für Europas Eliten.',
-      africaReality: '„Compound System“: Afrikanische Bergleute wurden in kasernierten Lagern eingesperrt und vor Entlassung rektal durchsucht.',
-      keyFact: 'Cecil Rhodes nutzte den Diamantenreichtum, um mit Privatarmeen bis nach Simbabwe (Rhodesien) vorzudringen.',
-      stat: '90% der weltweiten Diamantenproduktion um 1900',
+      tag: 'Weltgrößte Minenkonzerne (De Beers)',
+      europeDemand: 'Sicherung des Goldstandards der Bank of England und Finanzierung des britischen Finanzimperiums; Luxusschmuck für die Oberschicht Europas.',
+      africaReality: 'Das berüchtigte „Compound-System“: Afrikanische Minenarbeiter wurden in umzäunten, streng bewachten Lagern kaserniert, durften diese monatelang nicht verlassen und wurden vor Entlassung rektal nach Diamanten durchsucht.',
+      devastation: 'Entwurzelung traditioneller Familienstrukturen, Einführung diskriminierender Passgesetze und die Vorläufer der späteren Apartheidgesetzgebung (Natives Land Act 1913).',
+      beneficiary: 'Cecil Rhodes und britische Bankiers; Gründung der Kolonie Rhodesien (heute Simbabwe/Sambia) mit Privatarmeen der British South Africa Company.',
     },
     {
       id: 'palmoil',
       name: 'Palmöl & Fette',
       icon: '🌴',
       region: 'Nigerdelta (Nigeria) & Dahomey',
-      tag: 'Industrie-Schmierstoff',
-      tollBadge: 'Kanonenboot-Kriege',
-      europeUse: 'Schmiermittel für englische Textil- und Dampfmaschinen; Grundstoff für Massenseifen (Lever Brothers / Sunlight).',
-      africaReality: 'Britische Kriegsschiffe bombardierten afrikanische Handelsstädte (Opobo, Nembe), um das Monopol afrikanischer Könige zu brechen.',
-      keyFact: 'Traditionelle Subsistenzwirtschaft wurde zugunsten exportorientierter Monokulturen zwangsweise zerstört.',
-      stat: 'Unerlässlich für die Schwerindustrie in Manchester & Birmingham',
+      tag: 'Schmiermittel der Industriellen Revolution',
+      europeDemand: 'Unverzichtbares Schmiermittel für die rasant laufenden Dampfmaschinen und Webstühle in Manchester; Grundstoff für Massenseifen (Sunlight / Lever Brothers) und Kerzen.',
+      africaReality: 'Britische Kriegsschiffe bombardierten afrikanische Handelsstädte (z. B. Opobo, Nembe, Benin City), zerstörten lokale Palmenhaine und entführten unbotmäßige Herrscher.',
+      devastation: 'Zerschlagung blühender afrikanischer Händlerdynastien; Zwangsumstellung von Ernährungssouveränität auf exportorientierte Monokulturen.',
+      beneficiary: 'Die Royal Niger Company (später Unilever) erhielt ein königliches Freibrief-Monopol und schöpfte den gesamten Flusshandel ab.',
     },
     {
       id: 'copper',
       name: 'Kupfer & Erze',
       icon: '⛏️',
       region: 'Katanga (Kongo) & Tsumeb (Namibia)',
-      tag: 'Elektrifizierung Europas',
-      tollBadge: 'Zwangsumsiedlung',
-      europeUse: 'Millionen Kilometer Kupferdrähte für Telegrafennetze, städtische Stromnetze und Messinghülsen für Munition.',
-      africaReality: 'König Msiri wurde 1891 von belgischen Söldnern erschossen; Arbeiter wurden tausende Kilometer zwangsrekrutiert.',
-      keyFact: 'Monopolkonzerne wie Union Minière beherrschten riesige Territorien als autonome Staaten im Staate.',
-      stat: 'Eines der reichsten Erzvorkommen der Erde',
+      tag: 'Elektrifizierung des Globus',
+      europeDemand: 'Millionen Kilometer Kupferleitungen für Telefonnetze, Stromnetze in europäischen Metropolen und Messinghülsen für Gewehrmunition.',
+      africaReality: 'König Msiri von Garenganze (Katanga) wurde 1891 von belgischen Söldnern erschossen, als er sich weigerte, seine Minen zu übergeben. Tausende Arbeiter wurden aus Nachbarregionen zwangsrekrutiert.',
+      devastation: 'Tödliche Arbeitsbedingungen unter Tage, Silikose-Erkrankungen und Ausbeutung ganzer Generationen ohne gewerkschaftliche Rechte.',
+      beneficiary: 'Monopolkonzerne wie Union Minière du Haut-Katanga, die bis in die 1960er Jahre als Staat im Staate regierten.',
     },
     {
       id: 'ivory',
       name: 'Elfenbein',
       icon: '🦣',
       region: 'Ost- und Zentralafrika',
-      tag: 'Viktorianischer Luxus',
-      tollBadge: 'Träger-Todesmärsche',
-      europeUse: 'Klaviertasten, Billardkugeln, Messergriffe und Miniaturen des europäischen Bürgertums.',
-      africaReality: 'Trägerzwangsarbeit: Einheimische mussten 40 kg schwere Stoßzähne hunderte Kilometer durch Dschungel und Steppe schleppen.',
-      keyFact: 'Für jede Tonne Elfenbein starben hunderte afrikanische Zwangsträger an Erschöpfung und Unterernährung.',
-      stat: 'Zehntausende Elefanten und Träger getötet',
-    },
-  ];
-
-  const MYTHS = [
-    {
-      id: 'burden',
-      title: '„The White Man’s Burden“ & Zivilisierungsmission',
-      origin: 'Rudyard Kipling (1899) & europäische Kolonialpropaganda',
-      mythQuote: '„Europa bringt den wilden Völkern Bildung, Eisenbahnen, Medizin und das Völkerrecht als selbstloses Opfer.“',
-      realityText: 'Eisenbahnlinien wurden ausschließlich von Minen und Plantagen direkt zu Küstenhäfen gebaut, um Rohstoffe abzutransportieren – nicht für die Mobilität der Bevölkerung. Einheimische wurden rechtlos gestellt („Code de l’Indigénat“).',
-      counterEvidence: 'Über 95% aller kolonialen Staatsausgaben flossen in Militär, Polizeikräfte und Zwangsarbeitsüberwachung.',
-    },
-    {
-      id: 'terra-nullius',
-      title: '„Terra Nullius“ & Freiwillige Verträge',
-      origin: 'Völkerrechtliche Konstruktion auf der Berliner Konferenz',
-      mythQuote: '„Afrika war herrenloses Land ohne staatliche Ordnung; afrikanische Häuptlinge traten ihre Gebiete freiwillig ab.“',
-      realityText: 'Afrika bestand aus hochentwickelten Königreichen, Kalifaten und Föderationen. Agenten wie Carl Peters nutzten Alkohol und Täuschung, um Häuptlingen unverständliche deutsche Verträge für ein paar Glasperlen unterzuschieben.',
-      counterEvidence: 'Artikel 34/35 der Berliner Akte definierte „effektive Okkupation“: Mächte mussten militärische Gewalt androhen, um Ansprüche zu sichern.',
-    },
-    {
-      id: 'social-darwinism',
-      title: 'Sozialdarwinismus & Rassenhierarchie',
-      origin: 'Pseudowissenschaft des 19. Jahrhunderts (Spencer, Haeckel)',
-      mythQuote: '„Im Kampf ums Dasein hat die technisch überlegene weiße Rasse das Naturrecht, schwächere Völker zu beherrschen.“',
-      realityText: 'Diente als pseudowissenschaftliche Rechtfertigung für Völkermord. Generalleutnant Lothar von Trotha begründete 1904 den Völkermord an den Herero und Nama explizit mit dem rassistischen „Ausrottungskampf“.',
-      counterEvidence: 'Erster Völkermord des 20. Jahrhunderts: 80% des Herero-Volkes und 50% der Nama starben durch Verdurstenlassen und Konzentrationslager.',
+      tag: 'Viktorianischer Statusschmuck',
+      europeDemand: 'Klaviertasten für das europäische Bürgertum, Billardkugeln, kunstvoll geschnitzte Besteckgriffe und Kruzifixe.',
+      africaReality: 'Einheimische wurden mit Waffengewalt als Träger („Kuli“) verpflichtet, um die schweren Stoßzähne (oft über 40 kg pro Mann) hunderte Kilometer durch Dschungel und Wüste zur Küste zu schleppen.',
+      devastation: 'Zehntausende Träger starben auf den Märschen an Erschöpfung, Durst oder Misshandlung; die Elefantenpopulation Afrikas brach um 75% ein.',
+      beneficiary: 'Europäische Handelshäuser in Hamburg, Liverpool und Antwerpen sowie koloniale Konzessionsgesellschaften.',
     },
   ];
 
   const BORDER_CASES = [
     {
-      id: 'somali',
-      name: 'Das Volk der Somali',
-      flag: '🇸🇴',
-      cutInto: 'Auf 4 verschiedene Mächte aufgeteilt',
-      powers: ['Britisch-Somaliland', 'Italienisch-Somaliland', 'Französisch-Somaliland (Dschibuti)', 'Äthiopien'],
-      impact: 'Einheitliche Nomadenkultur, Sprache und Weiderouten wurden durch willkürliche Grenzposten und Zölle zerrissen.',
-      todayConflict: 'Grenzkonflikte am Horn von Afrika bis in die Gegenwart (z. B. Ogaden-Krieg).',
+      id: 'massai',
+      name: 'Die Zerschneidung des Massai-Volkes',
+      region: 'Ostafrika (Kenia / Tansania)',
+      border: 'Britisch-Ostafrika vs. Deutsch-Ostafrika',
+      lineOrigin: '1886 zogen Diplomaten in London und Berlin mit dem Lineal eine gerade Linie vom Viktoriasee zum Indischen Ozean.',
+      consequence: 'Ein nomadisches Hirtenvolk wurde in zwei getrennte koloniale Verwaltungssysteme gespalten. Weideland, Brunnen und Wanderrouten wurden durch bewaffnete Grenzposten abgeschnitten.',
+      quote: '„Der Kilimandscharo wurde der Legende nach Königin Victorias Neffen Kaiser Wilhelm II. als Geburtstagsgeschenk überlassen — afrikanische Grenzen als familiäres Tauschobjekt.“',
     },
     {
       id: 'ewe',
-      name: 'Das Volk der Ewe',
-      flag: '🇬🇭 🇹🇬',
-      cutInto: 'Geteilt zwischen Briten & Deutschen',
-      powers: ['Britische Goldküste (Ghana)', 'Deutsches Schutzgebiet Togo'],
-      impact: 'Familien und Äcker wurden durch einen kerzengeraden Linealstrich auf der Landkarte in zwei fremde Sprach- und Währungszonen getrennt.',
-      todayConflict: 'Bis heute verläuft die Staatsgrenze zwischen Ghana und Togo mitten durch das Siedlungsgebiet der Ewe.',
+      name: 'Das Ewe-Volk zwischen drei Kolonien',
+      region: 'Westafrika (Ghana / Togo / Benin)',
+      border: 'Britische Goldküste vs. Deutsches Togo vs. Französisches Dahomey',
+      lineOrigin: 'Die Küstengrenzen wurden entlang willkürlicher Längengrade gezogen, um den deutschen Schmuggelhafen Lomé abzugrenzen.',
+      consequence: 'Eine homogene Sprach- und Kulturgemeinschaft wurde auf drei verschiedene Kolonialmächte verteilt, mit englischem, deutschem und französischem Schulsystem bis heute.',
+      quote: '„Unsere Familien wohnen 200 Meter voneinander entfernt, aber zwischen uns verläuft die Grenze zweier europäischer Imperien.“',
     },
     {
-      id: 'maasai',
-      name: 'Das Volk der Maasai',
-      flag: '🇰🇪 🇹🇿',
-      cutInto: 'Geteilt zwischen Kenia & Tansania',
-      powers: ['Britisch-Ostafrika (Kenia)', 'Deutsch-Ostafrika (Tansania)'],
-      impact: 'Fruchtbarstes Weideland wurde für weiße Kaffeepflanzer enteignet; traditionelle Wanderweidewirtschaft wurde unter Strafe gestellt.',
-      todayConflict: 'Verlust von über 60% des traditionellen Stammeslandes.',
+      id: 'somali',
+      name: 'Die Fünfteilung der Somali',
+      region: 'Horn von Afrika',
+      border: 'Britisch-, Französisch-, Italienisch-Somaliland, Äthiopien & Kenia',
+      lineOrigin: 'Europäische Seemächte schnitten die Küsten des Roten Meeres und des Indischen Ozeans in fünf unterschiedliche Kolonien auf.',
+      consequence: 'Entstehung anhaltender Grenzkonflikte und Kriege im 20. Jahrhundert (Ogaden-Krieg), da clanbasierte Nomadengebiete durch starre Barrikaden blockiert wurden.',
+      quote: '„Bis heute trägt die somalische Flagge einen fünfzackigen Stern — als Mahnmal für die fünf durch Kolonialmächte zerschnittenen Territorien.“',
+    },
+    {
+      id: 'bakongo',
+      name: 'Das zerstückelte Königreich Kongo',
+      region: 'Zentralafrika (Kongo / Angola / Gabun)',
+      border: 'Belgisch-Kongo vs. Französisch-Kongo vs. Portugiesisch-Angola',
+      lineOrigin: 'Das seit dem 14. Jahrhundert existierende, hochentwickelte Königreich Kongo wurde an den Mündungen des Kongo-Flusses zerstückelt.',
+      consequence: 'Zerstörung der jahrhundertealten Königstradition in Mbanza Kongo; Aufteilung des Volkes der Bakongo auf drei verschiedene Besatzungszonen.',
+      quote: '„Ein Reich mit eigener Verfassung und Botschaftern in Rom wurde auf einer Berliner Konferenzkarte ausgelöscht.“',
     },
   ];
 
-  const RESISTANCE_FIGURES = [
+  const HEROES = [
     {
-      id: 'taytu',
-      name: 'Kaiserin Taytu Betul & Menelik II.',
+      name: 'Kaiserin Taytu Betul & Kaiser Menelik II.',
       nation: 'Kaiserreich Äthiopien',
-      year: '1896',
-      event: 'Schlacht von Adwa',
-      outcome: 'victory',
-      outcomeLabel: 'Historischer Sieg 🟢',
-      quote: '„Ich bin eine Frau. Ich liebe den Krieg nicht. Aber ich sterbe lieber, als mein Land zu unterwerfen!“',
-      action: 'Zerschlug mit 100.000 Soldaten das italienische Invasionsheer; Äthiopien blieb das einzige unkolonisierte Reich.',
+      achievement: 'Vernichtender Sieg bei Adwa (1896)',
+      quote: '„Ich bin eine Frau. Ich liebe den Krieg nicht. Aber ich sterbe lieber als stolze Äthiopierin, als mein Land der Schande der Kolonialisierung zu unterwerfen!“',
+      history: 'Italien versuchte durch den gefälschten Vertrag von Wuchale (1889), Äthiopien zu einem Protektorat zu erklären. Kaiserin Taytu Betul entlarvte den Betrug. Menelik II. mobilisierte 100.000 Krieger, ausgerüstet mit modernen Gewehren. Am 1. März 1896 zerschlug das äthiopische Heer die italienische Invasionsarmee bei Adwa. Äthiopien blieb frei!',
+      impact: 'Italien musste die vollständige Souveränität Äthiopiens bedingungslos anerkennen.',
     },
     {
-      id: 'yaa',
       name: 'Königinmutter Yaa Asantewaa',
       nation: 'Ashanti-Reich (Ghana)',
-      year: '1900',
-      event: 'Krieg der Goldenen Bank',
-      outcome: 'resistance',
-      outcomeLabel: 'Heroischer Widerstand ⚔️',
-      quote: '„Wenn die Männer von Ashanti zögern, kämpfen wir Frauen bis zur Letzten!“',
-      action: 'Führte 5.000 Krieger an und belagerte das britische Fort in Kumasi monatelang gegen Maschinengewehre.',
+      achievement: 'Krieg der Goldenen Bank (1900)',
+      quote: '„Wenn die Männer von Ashanti feige sind, werden wir Frauen kämpfen! Wir weichen keinen Schritt zurück!“',
+      history: 'Als der britische Gouverneur verlangte, auf dem heiligen goldenen Thron der Ashanti Platz zu nehmen, übernahm die 60-jährige Yaa Asantewaa den Oberbefehl über 5.000 Krieger und belagerte das britische Fort in Kumasi monatelang.',
+      impact: 'Die Briten konnten die Goldene Bank niemals erbeuten — sie bleibt bis heute das unantastbare Symbol der Ashanti-Würde.',
     },
     {
-      id: 'samory',
-      name: 'Almamy Samory Touré',
-      nation: 'Wassoulou-Reich (Guinea/Mali)',
-      year: '1882–1898',
-      event: '16 Jahre Guerillakrieg',
-      outcome: 'resistance',
-      outcomeLabel: '16 Jahre Widerstand ⚔️',
-      quote: '„Eher brenne ich meine Städte nieder, als sie den Franzosen zu übergeben.“',
-      action: 'Befehligte 30.000 Mann mit eigener Gewehrproduktion; stoppte die französische Expansion über ein Jahrzehnt.',
+      name: 'Almamy Samori Touré',
+      nation: 'Wassoulou-Reich (Guinea / Mali)',
+      achievement: '16 Jahre Widerstand gegen Frankreich (1882–1898)',
+      quote: '„Eher brenne ich meine eigenen Festungen nieder, als dass die Franzosen sie mit ihren Kanonen einnehmen.“',
+      history: 'Samori Touré baute ein modernes Heer mit eigener Gewehrproduktion auf. Mit brillanter Taktik fügte er den französischen Kolonialtruppen über anderthalb Jahrzehnte schwere Niederlagen zu.',
+      impact: 'Frankreich benötigte über 16 Jahre und zehntausende Soldaten, um die Sahelzone zu unterwerfen.',
     },
     {
-      id: 'bell',
-      name: 'König Rudolf Duala Manga Bell',
-      nation: 'Duala (Kamerun)',
-      year: '1914',
-      event: 'Rechtlicher & politischer Widerstand',
-      outcome: 'resistance',
-      outcomeLabel: 'Politischer Märtyrer ⚖️',
-      quote: '„Unschuldiges Blut wird an diesem Galgen vergossen. Es wird gerächt werden!“',
-      action: 'Kämpfte mit Petitionen an den Deutschen Reichstag gegen Enteignung; 1914 von den Kolonialherren hingerichtet.',
+      name: 'Kaptein Hendrik Witbooi',
+      nation: 'Nama-Volk (Namibia)',
+      achievement: 'Freiheitskämpfer & Philosoph gegen das Deutsche Reich',
+      quote: '„Der Herr hat jedem Volk sein eigenes Land gegeben. Sie sagen, Sie wollen mich beschützen? Vor wem? Ich habe keinen Feind, den ich nicht selbst abwehren könnte.“',
+      history: 'Witbooi führte diplomatischen und militärischen Widerstand gegen die deutsche Kolonialmacht. Seine Briefe an die Gouverneure sind Meisterwerke afrikanischer politischer Philosophie und UNESCO-Weltdokumentenerbe.',
+      impact: 'Symbolfigur des namibischen Freiheitskampfes; sein Porträt ziert die namibischen Banknoten.',
     },
   ];
 
-  const activeRes = RESOURCES[selectedResource];
-  const activeMyth = MYTHS[activeMythIdx];
-  const activeBorder = BORDER_CASES[activeBorderCase];
-
-  const filteredResistance = resistanceFilter === 'all'
-    ? RESISTANCE_FIGURES
-    : RESISTANCE_FIGURES.filter((r) => r.outcome === resistanceFilter);
-
   return (
-    <div className="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 select-none space-y-8">
-      {/* Visual Header */}
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-[#382d22] pb-6">
+    <div className="w-full max-w-6xl mx-auto px-4 sm:px-6 py-6 select-none space-y-8">
+      {/* Top Banner Header */}
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-[#3e2c1c] pb-6">
         <div>
           <div className="flex items-center gap-2">
-            <span className="px-2.5 py-0.5 rounded bg-[#ef4444]/15 text-[#ef4444] text-[10px] font-cinzel uppercase tracking-widest border border-[#ef4444]/30 font-bold">
-              Kritische Analyse
+            <span className="px-2.5 py-0.5 rounded bg-[#ef4444]/15 text-[#ef4444] text-[10.5px] font-cinzel uppercase tracking-[0.25em] font-bold border border-[#ef4444]/30">
+              Dokumentation &amp; Analyse
             </span>
             <span className="text-xs text-[#a89680] font-serif">
-              Wirtschaftliche Ausbeutung &amp; Gegenwehr
+              Wirtschaftliche Ausplünderung, Willkürgrenzen &amp; Gegenwehr
             </span>
           </div>
-          <h1 className="text-2xl sm:text-3xl lg:text-4xl font-garamond font-normal text-[#f5ebd9] mt-1">
-            Imperialismus, Rohstoffraub &amp; Widerstand
+          <h1 className="text-3xl sm:text-4xl lg:text-5xl font-garamond font-normal text-[#f5ebd9] mt-1.5 tracking-tight">
+            Imperialismus, Raubbau &amp; Gegenwehr
           </h1>
         </div>
 
@@ -229,7 +175,7 @@ export const ImperialismSection: React.FC<ImperialismSectionProps> = ({
                 soundFx.playSubtleTick();
                 onOpenMap();
               }}
-              className="px-3.5 py-2 bg-[#1f160e] hover:bg-[#2e2015] text-[#f5ebd9] text-xs font-cinzel rounded border border-[#854d0e]/60 transition-all cursor-pointer flex items-center gap-1.5 shadow"
+              className="px-4 py-2 bg-[#192433] hover:bg-[#233349] text-[#93c5fd] text-xs font-cinzel rounded border border-[#3b82f6]/40 transition-all cursor-pointer flex items-center gap-1.5 shadow"
             >
               <span>🗺️</span>
               <span>Afrika-Karte ansehen</span>
@@ -241,531 +187,390 @@ export const ImperialismSection: React.FC<ImperialismSectionProps> = ({
                 soundFx.playSubtleTick();
                 onOpenConferenceRoom();
               }}
-              className="px-3.5 py-2 bg-[#120d09] hover:bg-[#1f160e] text-[#a89680] hover:text-[#edd9b9] text-xs font-serif rounded border border-[#382d22] transition-colors cursor-pointer"
+              className="px-4 py-2 bg-[#17110b] hover:bg-[#251d16] text-[#dfd2be] text-xs font-cinzel rounded border border-[#c4a46a]/40 transition-colors cursor-pointer"
             >
-              ← Konferenzsaal
+              ← Zum Konferenzsaal
             </button>
           )}
         </div>
       </div>
 
-      {/* Visual Stat Counters Strip */}
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+      {/* 4 Clean Main Feature Tabs */}
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-2.5">
         {[
-          { label: 'Konferenztage in Berlin', value: '104 Tage', sub: '15. Nov. 1884 – 26. Feb. 1885', icon: '🏛️' },
-          { label: 'Afrikanische Vertreter', value: '0 Personen', sub: 'Vollständiger Ausschluss', icon: '🚫' },
-          { label: 'Kongo-Terror Todesopfer', value: 'Bis zu 10 Mio.', sub: 'Zwangsarbeit für Kautschuk', icon: '🩸' },
-          { label: 'Kolonisierter Kontinent', value: '90 % (1914)', sub: 'Vor Konferenz nur ca. 10 %', icon: '📏' },
-        ].map((item, idx) => (
-          <div
-            key={`stat-card-${idx}`}
-            className="bg-[#140e0a] border border-[#3e2c1c] p-3.5 rounded-lg flex items-center gap-3 shadow-md"
-          >
-            <div className="text-2xl p-2 bg-[#20150e] rounded-md border border-[#854d0e]/30">
-              {item.icon}
-            </div>
-            <div>
-              <span className="text-[10px] text-[#9c8973] uppercase font-cinzel block">
-                {item.label}
-              </span>
-              <span className="text-base sm:text-lg font-bold font-garamond text-[#f5ebd9]">
-                {item.value}
-              </span>
-              <span className="text-[10px] text-[#c4a46a] block font-serif">
-                {item.sub}
-              </span>
-            </div>
-          </div>
-        ))}
-      </div>
-
-      {/* Interactive Module Navigation Pills */}
-      <div className="flex items-center gap-2 overflow-x-auto pb-1 border-b border-[#2d2015]">
-        {[
-          { id: 'rohstoffe', label: '🩸 Rohstoff-Labor (Vorher/Nachher)', icon: '🩸' },
-          { id: 'entlarver', label: '⚖️ Mythos vs. Realität', icon: '⚖️' },
-          { id: 'lineal', label: '📏 Das Lineal von Berlin', icon: '📏' },
-          { id: 'widerstand', label: '⚔️ Widerstandshelden', icon: '⚔️' },
-          { id: 'handelsströme', label: '📊 Handelsströme & Flotten', icon: '📊' },
-        ].map((tab) => (
-          <button
-            key={tab.id}
-            onClick={() => {
-              soundFx.playSubtleTick();
-              setActiveTab(tab.id as typeof activeTab);
-            }}
-            className={`px-4 py-2 rounded-t-md text-xs font-cinzel whitespace-nowrap transition-all cursor-pointer border-t border-x flex items-center gap-1.5 ${
-              activeTab === tab.id
-                ? 'bg-[#1e150e] text-[#f5ebd9] border-[#c4a46a] font-bold shadow-md'
-                : 'bg-[#100b07] text-[#9c8973] hover:text-[#edd9b9] border-transparent hover:bg-[#17100b]'
-            }`}
-          >
-            <span>{tab.icon}</span>
-            <span>{tab.label}</span>
-          </button>
-        ))}
-      </div>
-
-      {/* MODULE 1: ROHSTOFF-LABOR (Interactive comparison cards) */}
-      {activeTab === 'rohstoffe' && (
-        <div className="space-y-6">
-          {/* Resource Selector Buttons */}
-          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-2.5">
-            {RESOURCES.map((res, idx) => (
-              <button
-                key={res.id}
-                onClick={() => {
-                  soundFx.playSubtleTick();
-                  setSelectedResource(idx);
-                }}
-                className={`p-3 rounded-lg border text-left transition-all cursor-pointer flex flex-col justify-between ${
-                  selectedResource === idx
-                    ? 'bg-[#2a1c12] border-[#c4a46a] shadow-lg scale-102'
-                    : 'bg-[#140e0a] border-[#382718] hover:border-[#854d0e] hover:bg-[#1c130b]'
-                }`}
-              >
-                <div className="flex items-center justify-between mb-1.5">
-                  <span className="text-2xl">{res.icon}</span>
-                  <span className="text-[9px] px-1.5 py-0.5 rounded bg-[#100c08] text-[#c4a46a] font-mono">
-                    {res.tollBadge}
-                  </span>
-                </div>
-                <div>
-                  <h3 className="text-xs sm:text-sm font-bold font-cinzel text-[#f5ebd9]">
-                    {res.name}
-                  </h3>
-                  <span className="text-[10px] text-[#9c8973] truncate block font-serif">
-                    {res.region.split('&')[0]}
-                  </span>
-                </div>
-              </button>
-            ))}
-          </div>
-
-          {/* Interactive Dual-Perspective Card */}
-          <div className="bg-[#140e0a] border-2 border-[#854d0e]/60 rounded-xl p-5 sm:p-7 shadow-2xl space-y-5">
-            {/* Header with Switcher */}
-            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-[#342416] pb-4">
-              <div className="flex items-center gap-3">
-                <span className="text-3xl">{activeRes.icon}</span>
-                <div>
-                  <div className="flex items-center gap-2">
-                    <h2 className="text-xl sm:text-2xl font-garamond font-bold text-[#f5ebd9]">
-                      {activeRes.name}
-                    </h2>
-                    <span className="text-[10px] px-2 py-0.5 rounded bg-[#78350f] text-[#fef3c7] font-cinzel">
-                      {activeRes.tag}
-                    </span>
-                  </div>
-                  <p className="text-xs text-[#a89680] font-serif">
-                    Hauptabbaugebiet: <strong className="text-[#edd9b9]">{activeRes.region}</strong>
-                  </p>
-                </div>
-              </div>
-
-              {/* Perspective Toggle Switcher */}
-              <div className="flex items-center bg-[#0d0906] p-1 rounded-lg border border-[#3e2c1c]">
-                <button
-                  onClick={() => {
-                    soundFx.playSubtleTick();
-                    setResourcePerspective('europe');
-                  }}
-                  className={`px-3 py-1.5 rounded text-xs font-cinzel transition-all cursor-pointer ${
-                    resourcePerspective === 'europe'
-                      ? 'bg-[#2a1d13] text-[#fef08a] font-bold shadow'
-                      : 'text-[#8a7965] hover:text-[#edd9b9]'
-                  }`}
-                >
-                  🇪🇺 Nutzen in Europa
-                </button>
-                <button
-                  onClick={() => {
-                    soundFx.playSubtleTick();
-                    setResourcePerspective('africa');
-                  }}
-                  className={`px-3 py-1.5 rounded text-xs font-cinzel transition-all cursor-pointer ${
-                    resourcePerspective === 'africa'
-                      ? 'bg-[#78350f] text-[#ffffff] font-bold shadow'
-                      : 'text-[#8a7965] hover:text-[#edd9b9]'
-                  }`}
-                >
-                  🩸 Realität in Afrika
-                </button>
-              </div>
-            </div>
-
-            {/* Perspective Content */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-5 items-stretch">
-              {/* Box 1: Selected View */}
-              <div
-                className={`p-5 rounded-lg border flex flex-col justify-between ${
-                  resourcePerspective === 'africa'
-                    ? 'bg-[#20100a] border-[#ef4444]/60'
-                    : 'bg-[#191910] border-[#eab308]/60'
-                }`}
-              >
-                <div className="space-y-2.5">
-                  <div className="flex items-center justify-between">
-                    <span className="text-[10px] uppercase tracking-wider font-cinzel font-bold text-[#fef08a]">
-                      {resourcePerspective === 'africa'
-                        ? '⚠️ Zwangsarbeit, Terror & Raub'
-                        : '🏭 Industrieller Boom & Profit'}
-                    </span>
-                    <span className="text-xs">
-                      {resourcePerspective === 'africa' ? '⛓️' : '⚙️'}
-                    </span>
-                  </div>
-                  <p className="text-sm font-prose text-[#edd9b9] leading-relaxed">
-                    {resourcePerspective === 'africa'
-                      ? activeRes.africaReality
-                      : activeRes.europeUse}
-                  </p>
-                </div>
-
-                <div className="pt-4 border-t border-[#3e2c1c]/50 mt-4">
-                  <span className="text-[11px] text-[#c4a46a] font-serif block">
-                    Statistischer Beleg:
-                  </span>
-                  <span className="text-sm font-bold font-garamond text-[#ffffff]">
-                    {activeRes.stat}
-                  </span>
-                </div>
-              </div>
-
-              {/* Box 2: Historical Takeaway */}
-              <div className="bg-[#18110b] p-5 rounded-lg border border-[#342416] flex flex-col justify-between">
-                <div className="space-y-2">
-                  <span className="text-[10px] uppercase tracking-wider font-cinzel text-[#a89680]">
-                    Historischer Hintergrund
-                  </span>
-                  <p className="text-xs sm:text-sm font-prose text-[#d6c7b2] leading-relaxed">
-                    {activeRes.keyFact}
-                  </p>
-                </div>
-
-                <div className="pt-4 border-t border-[#342416] mt-4 flex items-center justify-between">
-                  <span className="text-xs text-[#9c8973] font-serif">
-                    Opferbilanz:
-                  </span>
-                  <span className="text-xs font-bold font-cinzel px-2.5 py-1 rounded bg-[#3d120d] text-[#fca5a5] border border-[#ef4444]/40">
-                    {activeRes.tollBadge}
-                  </span>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      )}
-
-      {/* MODULE 2: MYTHOS VS. REALITÄT (Interactive Flip Cards) */}
-      {activeTab === 'entlarver' && (
-        <div className="space-y-6">
-          <div className="text-center max-w-2xl mx-auto space-y-1">
-            <span className="text-[10px] uppercase tracking-widest font-cinzel text-[#c4a46a]">
-              Ideologiekritik
-            </span>
-            <h2 className="text-2xl sm:text-3xl font-garamond font-bold text-[#f5ebd9]">
-              Die Mythen der Kolonialpropaganda entlarvt
-            </h2>
-            <p className="text-xs font-serif text-[#b8a690]">
-              Wähle einen der drei ideologischen Pfeiler der Berliner Konferenz und decke die historische Realität auf.
-            </p>
-          </div>
-
-          {/* Myth Select Buttons */}
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
-            {MYTHS.map((myth, idx) => (
-              <button
-                key={myth.id}
-                onClick={() => {
-                  soundFx.playSubtleTick();
-                  setActiveMythIdx(idx);
-                  setIsFlipped(false);
-                }}
-                className={`p-4 rounded-lg border text-left transition-all cursor-pointer ${
-                  activeMythIdx === idx
-                    ? 'bg-[#24170f] border-[#c4a46a] shadow-lg'
-                    : 'bg-[#120d09] border-[#382617] hover:border-[#854d0e]'
-                }`}
-              >
-                <div className="text-xs font-cinzel font-bold text-[#f5ebd9] mb-1">
-                  {idx + 1}. {myth.title.split('&')[0]}
-                </div>
-                <div className="text-[10px] text-[#9c8973] truncate">
-                  {myth.origin}
-                </div>
-              </button>
-            ))}
-          </div>
-
-          {/* Large Interactive Comparison Board */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-5 items-stretch">
-            {/* Left: Der koloniale Mythos */}
-            <div className="bg-[#1c130b] border-2 border-[#eab308]/60 p-6 rounded-xl space-y-4 flex flex-col justify-between shadow-xl">
-              <div>
-                <div className="flex items-center justify-between pb-2 border-b border-[#382819]">
-                  <span className="text-xs font-cinzel font-bold text-[#fef08a] uppercase flex items-center gap-1.5">
-                    <span>📢</span>
-                    <span>Europäischer Rechtfertigungs-Mythos</span>
-                  </span>
-                  <span className="text-[10px] px-2 py-0.5 rounded bg-[#2b1f13] text-[#eab308] font-mono">
-                    Propaganda
-                  </span>
-                </div>
-                <blockquote className="mt-4 p-4 rounded bg-[#140e08] border-l-4 border-[#eab308] text-xs sm:text-sm font-serif italic text-[#edd9b9] leading-relaxed">
-                  {activeMyth.mythQuote}
-                </blockquote>
-                <p className="mt-3 text-xs text-[#9c8973]">
-                  <strong>Quelle &amp; Doktrin:</strong> {activeMyth.origin}
-                </p>
-              </div>
-
-              <div className="text-[11px] text-[#baa892] pt-3 border-t border-[#2e2013]">
-                💡 <em>Diente auf der Berliner Konferenz als diplomatische Fassade für Freihandel und imperialen Landraub.</em>
-              </div>
-            </div>
-
-            {/* Right: Die historische Realität */}
-            <div className="bg-[#1e0f0a] border-2 border-[#ef4444]/60 p-6 rounded-xl space-y-4 flex flex-col justify-between shadow-xl">
-              <div>
-                <div className="flex items-center justify-between pb-2 border-b border-[#401a14]">
-                  <span className="text-xs font-cinzel font-bold text-[#fca5a5] uppercase flex items-center gap-1.5">
-                    <span>🔍</span>
-                    <span>Historische Realität &amp; Zwang</span>
-                  </span>
-                  <span className="text-[10px] px-2 py-0.5 rounded bg-[#450a0a] text-[#f87171] font-mono">
-                    Tatsachen
-                  </span>
-                </div>
-                <p className="mt-4 text-xs sm:text-sm font-prose text-[#e8ded0] leading-relaxed">
-                  {activeMyth.realityText}
-                </p>
-              </div>
-
-              <div className="bg-[#140805] p-3 rounded border border-[#ef4444]/30 space-y-1">
-                <span className="text-[10px] uppercase font-cinzel text-[#ef4444] font-bold block">
-                  Historischer Beleg:
+          { id: 'vergleich' as TabType, num: '01', title: 'Der 30-Jahre-Raubzug', sub: '1884 vs. 1914 Scramble', icon: '⚖️' },
+          { id: 'raubbau' as TabType, num: '02', title: '5 Säulen des Raubbaus', sub: 'Kautschuk, Gold, Kupfer & Co.', icon: '🩸' },
+          { id: 'grenzen' as TabType, num: '03', title: 'Das Lineal von Berlin', sub: 'Künstliche Grenzziehungen', icon: '📏' },
+          { id: 'widerstand' as TabType, num: '04', title: 'Afrikanische Souveräne', sub: 'Adwa & Freiheitskämpfe', icon: '⚔️' },
+        ].map((tab) => {
+          const isActive = activeTab === tab.id;
+          return (
+            <button
+              key={`main-tab-${tab.id}`}
+              onClick={() => {
+                soundFx.playSubtleTick();
+                setActiveTab(tab.id);
+              }}
+              className={`p-3.5 rounded-lg border text-left transition-all cursor-pointer relative overflow-hidden ${
+                isActive
+                  ? 'bg-[#22160d] border-[#c4a46a] shadow-[0_0_20px_rgba(196,164,106,0.25)]'
+                  : 'bg-[#120d09] border-[#382819] hover:border-[#6b4e31] hover:bg-[#18110b]'
+              }`}
+            >
+              <div className="flex items-center justify-between mb-1.5">
+                <span className={`text-[10px] font-cinzel font-bold tracking-widest ${isActive ? 'text-[#c4a46a]' : 'text-[#8c7b68]'}`}>
+                  TEIL {tab.num}
                 </span>
-                <p className="text-xs text-[#fca5a5] font-serif">
-                  {activeMyth.counterEvidence}
-                </p>
+                <span className="text-lg">{tab.icon}</span>
               </div>
-            </div>
-          </div>
-        </div>
-      )}
-
-      {/* MODULE 3: DAS LINEAL VON BERLIN (Interactive Ruler Simulator) */}
-      {activeTab === 'lineal' && (
-        <div className="space-y-6">
-          <div className="text-center max-w-2xl mx-auto space-y-1">
-            <span className="text-[10px] uppercase tracking-widest font-cinzel text-[#c4a46a]">
-              Geometrische Grenzziehung
-            </span>
-            <h2 className="text-2xl sm:text-3xl font-garamond font-bold text-[#f5ebd9]">
-              „Das Lineal von Berlin“ – Willkür am Kartentisch
-            </h2>
-            <p className="text-xs font-serif text-[#b8a690]">
-              Über 40 % aller afrikanischen Staatsgrenzen sind bis heute exakte geometrische Geraden. Bewege das Lineal, um zu sehen, wie reale Gesellschaften zerrissen wurden.
-            </p>
-          </div>
-
-          {/* Case Selector */}
-          <div className="flex items-center justify-center gap-2 flex-wrap">
-            {BORDER_CASES.map((bc, idx) => (
-              <button
-                key={bc.id}
-                onClick={() => {
-                  soundFx.playSubtleTick();
-                  setActiveBorderCase(idx);
-                }}
-                className={`px-4 py-2 rounded-lg text-xs font-cinzel cursor-pointer transition-all flex items-center gap-2 border ${
-                  activeBorderCase === idx
-                    ? 'bg-[#78350f] text-[#ffffff] border-[#f59e0b] font-bold shadow'
-                    : 'bg-[#140e0a] text-[#9c8973] border-[#382617] hover:border-[#854d0e]'
-                }`}
-              >
-                <span>{bc.flag}</span>
-                <span>{bc.name}</span>
-              </button>
-            ))}
-          </div>
-
-          {/* Interactive Ruler Canvas */}
-          <div className="bg-[#140e0a] border-2 border-[#854d0e]/60 rounded-xl p-6 shadow-2xl space-y-6">
-            <div className="flex flex-col sm:flex-row items-center justify-between gap-4 border-b border-[#342416] pb-4">
-              <div>
-                <h3 className="text-lg font-bold font-garamond text-[#f5ebd9]">
-                  {activeBorder.name} {activeBorder.flag}
-                </h3>
-                <span className="text-xs text-[#ef4444] font-cinzel font-semibold">
-                  {activeBorder.cutInto}
-                </span>
-              </div>
-
-              {/* Colonizers Badges */}
-              <div className="flex items-center gap-1.5 flex-wrap">
-                {activeBorder.powers.map((pow, i) => (
-                  <span
-                    key={`pow-${i}`}
-                    className="text-[10px] px-2 py-0.5 rounded bg-[#20150e] text-[#edd9b9] border border-[#4a3622]"
-                  >
-                    {pow}
-                  </span>
-                ))}
-              </div>
-            </div>
-
-            {/* Interactive Slider Bar */}
-            <div className="space-y-2 bg-[#1a120c] p-4 rounded-lg border border-[#3e2c1c]">
-              <div className="flex items-center justify-between text-xs font-cinzel">
-                <span className="text-[#a89680]">Traditioneller Lebensraum</span>
-                <span className="text-[#f59e0b] font-bold">Linealschnitt: {rulerPosition}%</span>
-                <span className="text-[#ef4444]">Europäische Einflusszone</span>
-              </div>
-
-              <input
-                type="range"
-                min="10"
-                max="90"
-                value={rulerPosition}
-                onChange={(e) => {
-                  setRulerPosition(parseInt(e.target.value, 10));
-                  soundFx.playSubtleTick();
-                }}
-                className="w-full h-2.5 bg-[#0f0b07] rounded-lg appearance-none cursor-pointer accent-[#ef4444]"
-              />
-
-              <div className="flex justify-between text-[10px] text-[#705e4c]">
-                <span>← Ursprüngliche Weiderouten</span>
-                <span>Kerzengerader Strich auf der Reichskanzlei-Wandkarte</span>
-                <span>Kolonialer Stacheldraht →</span>
-              </div>
-            </div>
-
-            {/* Impact Details */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs leading-relaxed">
-              <div className="bg-[#20150e] p-4 rounded border border-[#854d0e]/30 space-y-1">
-                <span className="font-cinzel text-[#c4a46a] font-bold block">
-                  Direkte Auswirkung 1885–1914:
-                </span>
-                <p className="text-[#d6c7b2] font-prose">{activeBorder.impact}</p>
-              </div>
-
-              <div className="bg-[#20150e] p-4 rounded border border-[#854d0e]/30 space-y-1">
-                <span className="font-cinzel text-[#fca5a5] font-bold block">
-                  Langzeitfolge bis heute:
-                </span>
-                <p className="text-[#d6c7b2] font-prose">{activeBorder.todayConflict}</p>
-              </div>
-            </div>
-          </div>
-        </div>
-      )}
-
-      {/* MODULE 4: WIDERSTANDSHELDEN (Visual Action Cards) */}
-      {activeTab === 'widerstand' && (
-        <div className="space-y-6">
-          <div className="flex flex-col sm:flex-row items-center justify-between gap-3">
-            <div>
-              <h2 className="text-xl sm:text-2xl font-garamond font-bold text-[#f5ebd9]">
-                Afrikanischer Widerstand &amp; Souveränität
-              </h2>
-              <p className="text-xs text-[#a89680] font-serif">
-                Afrika ergab sich nicht kampflos. Auf dem gesamten Kontinent erhoben sich Reiche und Anführer gegen die koloniale Invasion.
+              <h3 className={`text-sm font-cinzel font-bold mb-0.5 ${isActive ? 'text-[#f5ebd9]' : 'text-[#ded1be]'}`}>
+                {tab.title}
+              </h3>
+              <p className="text-[11px] font-serif text-[#a89680]">
+                {tab.sub}
               </p>
-            </div>
+              {isActive && <div className="absolute bottom-0 left-0 right-0 h-1 bg-[#c4a46a]" />}
+            </button>
+          );
+        })}
+      </div>
 
-            <div className="flex items-center gap-1.5 bg-[#140e0a] p-1 rounded-lg border border-[#3e2c1c]">
-              <button
-                onClick={() => {
-                  soundFx.playSubtleTick();
-                  setResistanceFilter('all');
-                }}
-                className={`px-3 py-1 rounded text-xs font-cinzel cursor-pointer ${
-                  resistanceFilter === 'all'
-                    ? 'bg-[#2a1d13] text-[#f5ebd9] font-bold'
-                    : 'text-[#8a7965]'
-                }`}
-              >
-                Alle
-              </button>
-              <button
-                onClick={() => {
-                  soundFx.playSubtleTick();
-                  setResistanceFilter('victory');
-                }}
-                className={`px-3 py-1 rounded text-xs font-cinzel cursor-pointer ${
-                  resistanceFilter === 'victory'
-                    ? 'bg-[#14532d] text-[#86efac] font-bold'
-                    : 'text-[#8a7965]'
-                }`}
-              >
-                Siege 🟢
-              </button>
-              <button
-                onClick={() => {
-                  soundFx.playSubtleTick();
-                  setResistanceFilter('resistance');
-                }}
-                className={`px-3 py-1 rounded text-xs font-cinzel cursor-pointer ${
-                  resistanceFilter === 'resistance'
-                    ? 'bg-[#78350f] text-[#fde047] font-bold'
-                    : 'text-[#8a7965]'
-                }`}
-              >
-                Gegenwehr ⚔️
-              </button>
-            </div>
-          </div>
-
-          {/* Cards Grid */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            {filteredResistance.map((res) => (
-              <div
-                key={res.id}
-                className="bg-[#140e0a] border border-[#3e2c1c] hover:border-[#854d0e] p-5 rounded-xl space-y-3.5 transition-all shadow-lg flex flex-col justify-between"
-              >
+      {/* Main Tab Content */}
+      <AnimatePresence mode="wait">
+        {/* ============================================================== */}
+        {/* TAB 1: DER 30-JAHRE-RAUBZUG (1884 vs 1914)                     */}
+        {/* ============================================================== */}
+        {activeTab === 'vergleich' && (
+          <motion.div
+            key="tab-vergleich"
+            initial={{ opacity: 0, y: 8 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -8 }}
+            className="space-y-6"
+          >
+            {/* Year Switcher Banner */}
+            <div className="p-6 bg-[#160f0a] border-2 border-[#c4a46a]/40 rounded-xl space-y-5">
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-[#3d2c1e] pb-4">
                 <div>
-                  <div className="flex items-start justify-between gap-2">
-                    <div>
-                      <span className="text-[10px] text-[#c4a46a] font-cinzel font-bold uppercase tracking-wider block">
-                        {res.nation} · {res.year}
-                      </span>
-                      <h3 className="text-lg font-bold font-garamond text-[#f5ebd9]">
-                        {res.name}
-                      </h3>
-                    </div>
-                    <span className="text-xs px-2.5 py-1 rounded bg-[#20150e] border border-[#4a3622] text-[#fef08a] font-cinzel shrink-0">
-                      {res.outcomeLabel}
-                    </span>
+                  <span className="text-[10px] font-cinzel uppercase tracking-widest text-[#c4a46a] font-bold block">
+                    Interaktiver Epochen-Vergleich
+                  </span>
+                  <h2 className="text-2xl font-cinzel font-bold text-[#f5ebd9]">
+                    Die Geschwindigkeit der Kolonisierung
+                  </h2>
+                </div>
+
+                <div className="flex items-center gap-1.5 bg-[#0f0b07] p-1 rounded-lg border border-[#3e2c1c]">
+                  <button
+                    onClick={() => {
+                      soundFx.playSubtleTick();
+                      setCompareYear(1884);
+                    }}
+                    className={`px-4 py-1.5 rounded text-xs font-cinzel font-bold transition-all cursor-pointer ${
+                      compareYear === 1884
+                        ? 'bg-[#c4a46a] text-[#120e0b] shadow'
+                        : 'text-[#8c7b68] hover:text-[#edd9b9]'
+                    }`}
+                  >
+                    1884 (Vorabend der Konferenz)
+                  </button>
+                  <button
+                    onClick={() => {
+                      soundFx.playSubtleTick();
+                      setCompareYear(1914);
+                    }}
+                    className={`px-4 py-1.5 rounded text-xs font-cinzel font-bold transition-all cursor-pointer ${
+                      compareYear === 1914
+                        ? 'bg-[#ef4444] text-[#fff] shadow'
+                        : 'text-[#8c7b68] hover:text-[#edd9b9]'
+                    }`}
+                  >
+                    1914 (Ausbruch 1. Weltkrieg)
+                  </button>
+                </div>
+              </div>
+
+              {/* Data Card for Chosen Year */}
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div className="p-4 bg-[#1e140d] rounded-lg border border-[#3e2c1c] text-center">
+                  <span className="text-[10.5px] uppercase font-cinzel tracking-wider text-[#a89680] block">
+                    Europäische Kontrolle
+                  </span>
+                  <div className={`text-3xl font-bold font-garamond my-1 ${compareYear === 1884 ? 'text-[#c4a46a]' : 'text-[#ef4444]'}`}>
+                    {compareYear === 1884 ? '~10 % der Fläche' : '~90 % der Fläche'}
                   </div>
-
-                  <blockquote className="mt-3 p-3 bg-[#1e140d] border-l-2 border-[#c4a46a] text-xs font-serif italic text-[#edd9b9] leading-relaxed">
-                    {res.quote}
-                  </blockquote>
-
-                  <p className="mt-3 text-xs font-prose text-[#b8a690] leading-relaxed">
-                    {res.action}
+                  <p className="text-[11px] font-prose text-[#d4c3ae]">
+                    {compareYear === 1884
+                      ? 'Hauptsächlich Küstenhandelsstationen, Enklaven und alte Handelsrouten.'
+                      : 'Nahezu der gesamte Kontinent aufgeteilt und militärisch besetzt.'}
                   </p>
                 </div>
 
-                <div className="pt-3 border-t border-[#2d1e13] text-[11px] text-[#8a7965] flex items-center justify-between">
-                  <span>Schlüsselschauplatz: <strong>{res.event}</strong></span>
-                  <span className="text-sm">⚔️</span>
+                <div className="p-4 bg-[#1e140d] rounded-lg border border-[#3e2c1c] text-center">
+                  <span className="text-[10.5px] uppercase font-cinzel tracking-wider text-[#a89680] block">
+                    Freie afrikanische Staaten
+                  </span>
+                  <div className={`text-3xl font-bold font-garamond my-1 ${compareYear === 1884 ? 'text-[#10b981]' : 'text-[#f59e0b]'}`}>
+                    {compareYear === 1884 ? 'Hunderte Königreiche' : 'Nur 2 Staaten'}
+                  </div>
+                  <p className="text-[11px] font-prose text-[#d4c3ae]">
+                    {compareYear === 1884
+                      ? 'Sokoto, Ashanti, Kongo, Buganda, Zulu, Äthiopien und viele weitere souverän.'
+                      : 'Nur Äthiopien (Sieg bei Adwa 1896) und Liberia blieben formell unabhängig.'}
+                  </p>
+                </div>
+
+                <div className="p-4 bg-[#1e140d] rounded-lg border border-[#3e2c1c] text-center">
+                  <span className="text-[10.5px] uppercase font-cinzel tracking-wider text-[#a89680] block">
+                    Die treibende Kraft
+                  </span>
+                  <div className="text-xl font-bold font-cinzel my-1 text-[#f5ebd9]">
+                    {compareYear === 1884 ? 'Die Berliner Konferenz' : 'Maxim-Maschinengewehre'}
+                  </div>
+                  <p className="text-[11px] font-prose text-[#d4c3ae]">
+                    {compareYear === 1884
+                      ? 'Das Prinzip der „effektiven Okkupation“ erzwang die sofortige militärische Besetzung.'
+                      : 'Industrielle Waffengewalt brach traditionelle Heere in wenigen Jahrzehnten.'}
+                  </p>
                 </div>
               </div>
-            ))}
-          </div>
-        </div>
-      )}
 
-      {/* MODULE 5: HANDELSSTRÖME & DASHBOARD */}
-      {activeTab === 'handelsströme' && (
-        <div className="space-y-4">
-          <ImperialismTradeDashboard onOpenMap={onOpenMap} />
-        </div>
-      )}
+              {/* Side-by-Side: Propaganda vs. Realität */}
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pt-2">
+                <div className="p-4 bg-[#191e17] border border-[#10b981]/30 rounded-lg space-y-2">
+                  <span className="text-xs font-cinzel font-bold text-[#6ee7b7] flex items-center gap-1.5 uppercase tracking-wider">
+                    <span>🕊️</span> Die europäische Propaganda
+                  </span>
+                  <p className="text-xs font-prose text-[#d1e7dd] leading-relaxed">
+                    Bismarck und die Diplomaten behaupteten, man wolle Afrika „die Segnungen der christlichen Zivilisation bringen“,
+                    den arabischen Sklavenhandel stoppen und wissenschaftliche Forschung sowie Freihandel fördern.
+                  </p>
+                </div>
+
+                <div className="p-4 bg-[#23120c] border border-[#ef4444]/40 rounded-lg space-y-2">
+                  <span className="text-xs font-cinzel font-bold text-[#fca5a5] flex items-center gap-1.5 uppercase tracking-wider">
+                    <span>🩸</span> Die brutale koloniale Realität
+                  </span>
+                  <p className="text-xs font-prose text-[#f8d7da] leading-relaxed">
+                    Einführung von Kopfsteuern, um Zwangsarbeit zu erzwingen; Zerstörung lokaler Landwirtschaft zugunsten von Monokulturen;
+                    Massenverstümmelungen im Kongo; Völkermord an den Herero und Nama in Deutsch-Südwestafrika.
+                  </p>
+                </div>
+              </div>
+            </div>
+          </motion.div>
+        )}
+
+        {/* ============================================================== */}
+        {/* TAB 2: DIE 5 SÄULEN DES RAUBBAUS                               */}
+        {/* ============================================================== */}
+        {activeTab === 'raubbau' && (
+          <motion.div
+            key="tab-raubbau"
+            initial={{ opacity: 0, y: 8 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -8 }}
+            className="space-y-5"
+          >
+            {/* Resource Selector Bar */}
+            <div className="flex items-center justify-center gap-2 flex-wrap">
+              {RESOURCES.map((res, idx) => (
+                <button
+                  key={`res-btn-${res.id}`}
+                  onClick={() => {
+                    soundFx.playSubtleTick();
+                    setSelectedResource(idx);
+                  }}
+                  className={`px-3.5 py-2 rounded-lg text-xs font-cinzel transition-all cursor-pointer border flex items-center gap-1.5 ${
+                    selectedResource === idx
+                      ? 'bg-[#c4a46a] text-[#120e0b] border-[#f5ebd9] font-bold shadow-md'
+                      : 'bg-[#150f0a] text-[#a89680] hover:text-[#fff] border-[#382819]'
+                  }`}
+                >
+                  <span>{res.icon}</span>
+                  <span>{res.name}</span>
+                </button>
+              ))}
+            </div>
+
+            {/* Selected Resource Showcase Card */}
+            {(() => {
+              const res = RESOURCES[selectedResource];
+              return (
+                <div className="p-6 bg-[#160f0a] border-2 border-[#c4a46a]/50 rounded-xl space-y-4 shadow-xl">
+                  <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-[#3d2c1e] pb-3">
+                    <div>
+                      <span className="text-[10.5px] font-cinzel uppercase tracking-widest text-[#f59e0b] font-bold block">
+                        {res.region}
+                      </span>
+                      <h2 className="text-2xl font-cinzel font-bold text-[#f5ebd9] flex items-center gap-2">
+                        <span>{res.icon}</span>
+                        <span>{res.name}</span>
+                      </h2>
+                    </div>
+                    <span className="px-3 py-1 rounded bg-[#2a1d13] text-[#c4a46a] border border-[#c4a46a]/30 text-xs font-cinzel font-bold self-start sm:self-auto">
+                      {res.tag}
+                    </span>
+                  </div>
+
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs font-prose">
+                    <div className="p-4 bg-[#1d140d] rounded-lg border border-[#3e2c1c] space-y-1.5">
+                      <strong className="text-[#60a5fa] block font-cinzel text-[11px]">
+                        🏭 Der Heißhunger der europäischen Industrie:
+                      </strong>
+                      <p className="text-[#d4c3ae] leading-relaxed">{res.europeDemand}</p>
+                    </div>
+
+                    <div className="p-4 bg-[#23120c] rounded-lg border border-[#ef4444]/30 space-y-1.5">
+                      <strong className="text-[#f87171] block font-cinzel text-[11px]">
+                        ⛓️ Die Realität vor Ort in Afrika:
+                      </strong>
+                      <p className="text-[#fca5a5] leading-relaxed">{res.africaReality}</p>
+                    </div>
+                  </div>
+
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs font-prose pt-1">
+                    <div className="p-3.5 bg-[#17100b] rounded-lg border border-[#3e2c1c]">
+                      <strong className="text-[#ef4444] block font-cinzel text-[10.5px] mb-1">
+                        💀 Menschliche &amp; ökologische Zerstörung:
+                      </strong>
+                      <p className="text-[#d1c2af] leading-relaxed">{res.devastation}</p>
+                    </div>
+
+                    <div className="p-3.5 bg-[#17100b] rounded-lg border border-[#3e2c1c]">
+                      <strong className="text-[#c4a46a] block font-cinzel text-[10.5px] mb-1">
+                        💰 Wer profitierte?:
+                      </strong>
+                      <p className="text-[#d1c2af] leading-relaxed">{res.beneficiary}</p>
+                    </div>
+                  </div>
+                </div>
+              );
+            })()}
+          </motion.div>
+        )}
+
+        {/* ============================================================== */}
+        {/* TAB 3: DAS LINEAL VON BERLIN (GRENZZIEHUNGEN)                   */}
+        {/* ============================================================== */}
+        {activeTab === 'grenzen' && (
+          <motion.div
+            key="tab-grenzen"
+            initial={{ opacity: 0, y: 8 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -8 }}
+            className="space-y-5"
+          >
+            <div className="p-4 bg-[#1a120b] border border-[#c4a46a]/30 rounded-lg text-xs font-prose text-[#d4c3ae] leading-relaxed text-center max-w-3xl mx-auto">
+              Europäische Diplomaten zeichneten mit Lineal und Zirkel schnurgerade Grenzen entlang von Längen- und Breitengraden.
+              Insgesamt wurden <strong>177 ethnische und sprachliche Gemeinschaften</strong> gewaltsam auseinandergerissen.
+            </div>
+
+            {/* Case Selector */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-2.5">
+              {BORDER_CASES.map((bc, idx) => (
+                <button
+                  key={`bc-${bc.id}`}
+                  onClick={() => {
+                    soundFx.playSubtleTick();
+                    setSelectedBorderCase(idx);
+                  }}
+                  className={`p-3 rounded-lg border text-left transition-all cursor-pointer ${
+                    selectedBorderCase === idx
+                      ? 'bg-[#2a1d13] border-[#c4a46a] text-[#f5ebd9] shadow'
+                      : 'bg-[#140e09] border-[#382819] text-[#a89680] hover:text-[#fff]'
+                  }`}
+                >
+                  <span className="text-[10px] font-cinzel uppercase tracking-wider text-[#c4a46a] block mb-0.5">
+                    Fallbeispiel 0{idx + 1}
+                  </span>
+                  <h4 className="text-xs font-cinzel font-bold text-[#f5ebd9]">{bc.name}</h4>
+                  <span className="text-[10.5px] font-serif text-[#8c7b68] block mt-0.5">{bc.region}</span>
+                </button>
+              ))}
+            </div>
+
+            {/* Case Detail Card */}
+            {(() => {
+              const bc = BORDER_CASES[selectedBorderCase];
+              return (
+                <div className="p-6 bg-[#160f0a] border-2 border-[#c4a46a]/50 rounded-xl space-y-4 shadow-xl">
+                  <div className="border-b border-[#3d2c1e] pb-3">
+                    <span className="text-[10.5px] font-cinzel uppercase tracking-widest text-[#f59e0b] font-bold block">
+                      {bc.region}
+                    </span>
+                    <h3 className="text-xl font-cinzel font-bold text-[#f5ebd9]">{bc.name}</h3>
+                    <span className="text-xs font-serif text-[#c4a46a]">Konfliktlinie: {bc.border}</span>
+                  </div>
+
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs font-prose">
+                    <div className="p-4 bg-[#1d140d] rounded-lg border border-[#3e2c1c] space-y-1.5">
+                      <strong className="text-[#c4a46a] block font-cinzel text-[11px]">
+                        📏 Wie die Grenze gezogen wurde:
+                      </strong>
+                      <p className="text-[#d4c3ae] leading-relaxed">{bc.lineOrigin}</p>
+                    </div>
+
+                    <div className="p-4 bg-[#23120c] rounded-lg border border-[#ef4444]/30 space-y-1.5">
+                      <strong className="text-[#f87171] block font-cinzel text-[11px]">
+                        💥 Die historische &amp; heutige Folge:
+                      </strong>
+                      <p className="text-[#fca5a5] leading-relaxed">{bc.consequence}</p>
+                    </div>
+                  </div>
+
+                  <div className="p-3 bg-[#1e150d] rounded-lg border-l-4 border-[#f59e0b] text-xs font-serif italic text-[#edd9b9]">
+                    {bc.quote}
+                  </div>
+                </div>
+              );
+            })()}
+          </motion.div>
+        )}
+
+        {/* ============================================================== */}
+        {/* TAB 4: AFRIKANISCHE SOUVERÄNE (WIDERSTAND)                     */}
+        {/* ============================================================== */}
+        {activeTab === 'widerstand' && (
+          <motion.div
+            key="tab-widerstand"
+            initial={{ opacity: 0, y: 8 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -8 }}
+            className="space-y-5"
+          >
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              {HEROES.map((h, idx) => (
+                <div key={`hero-card-${idx}`} className="p-5 bg-[#150f0a] border border-[#3e2c1c] rounded-xl space-y-3 hover:border-[#c4a46a]/60 transition-all">
+                  <div className="flex items-center justify-between border-b border-[#382819] pb-2">
+                    <div>
+                      <span className="text-[10px] font-cinzel uppercase tracking-widest text-[#f59e0b] font-bold block">
+                        {h.nation}
+                      </span>
+                      <h3 className="text-base font-cinzel font-bold text-[#f5ebd9]">{h.name}</h3>
+                    </div>
+                    <span className="px-2.5 py-1 rounded bg-[#10b981]/20 text-[#6ee7b7] text-[10px] font-cinzel font-bold border border-[#10b981]/30">
+                      {h.achievement}
+                    </span>
+                  </div>
+
+                  <div className="p-3 bg-[#1c130b] rounded border-l-2 border-[#f59e0b] text-xs font-serif italic text-[#f0e3d0] leading-relaxed">
+                    {h.quote}
+                  </div>
+
+                  <p className="text-xs font-prose text-[#d1c2af] leading-relaxed">
+                    {h.history}
+                  </p>
+
+                  <div className="text-[11px] font-prose text-[#10b981]">
+                    <strong>Ergebnis:</strong> {h.impact}
+                  </div>
+                </div>
+              ))}
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   );
 };

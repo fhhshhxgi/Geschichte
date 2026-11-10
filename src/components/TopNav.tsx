@@ -37,11 +37,11 @@ export const TopNav: React.FC<TopNavProps> = ({
 
   const getSceneSoundLabel = (scene: string) => {
     switch (scene) {
-      case 'conference-room': return 'Konferenzsaal (Murmeln & Uhr)';
-      case 'africa-map': return 'Wind über Afrika & Ozean';
-      case 'imperialism': return 'Industrieller Puls & Raubbau';
-      case 'dossier': return 'Staatsarchiv & Federkiel';
-      case 'africa-absence': return 'Leerer Stuhl (Mahnendes Echo)';
+      case 'conference-room': return 'Kammermusik & Salon (19. Jh.)';
+      case 'africa-map': return 'Sanfte Harfenklänge & Kontemplation';
+      case 'imperialism': return 'Ernste Streicher-Harmonie';
+      case 'dossier': return 'Staatsarchiv & Bibliothek';
+      case 'africa-absence': return 'Feierliches Mahn-Echo';
       default: return 'Historische Atmosphäre';
     }
   };
@@ -167,6 +167,19 @@ export const TopNav: React.FC<TopNavProps> = ({
                 Ton aus
               </span>
             )}
+          </button>
+
+          {/* Prologue Replay button */}
+          <button
+            onClick={() => {
+              soundFx.playChamberTone(true);
+              onReplayIntro();
+            }}
+            className="min-h-[40px] px-2.5 sm:px-3 py-1.5 rounded text-xs font-serif text-[#c4a46a] hover:text-[#f5ebd9] transition-colors border border-[#c4a46a]/40 hover:border-[#c4a46a] cursor-pointer flex items-center gap-1.5 active:scale-95"
+            title="Cinematischen Prolog abspielen"
+          >
+            <span>🎬</span>
+            <span className="hidden sm:inline">Prolog</span>
           </button>
 
           {/* Sources button */}

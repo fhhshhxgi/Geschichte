@@ -48,7 +48,9 @@ const DELEGATE_PORTRAIT_KEYWORDS: Record<string, string> = {
 };
 
 const EXPECTED_ROOM_IMAGES = [
+  'kongokonferenz_1884.jpg',
   '01_start_konferenzraum.png',
+  '01_start_konferenzraum.jpg',
   '02_leerer_platz_symbolisch.png',
   '03_deutsches_reich_bismarck.png',
   '04_grossbritannien_edward_malet.png',
@@ -84,7 +86,7 @@ const EXPECTED_PORTRAITS = [
   'portraits/17_osmanisches_reich_mehmed_said_pasha.png',
 ];
 
-const DB_NAME = 'berlin_conference_assets_v1';
+const DB_NAME = 'berlin_conference_assets_v2026_master';
 const STORE_NAME = 'assets';
 
 function openIndexedDB(): Promise<IDBDatabase> {
@@ -191,6 +193,10 @@ export const AssetProvider: React.FC<{ children: ReactNode }> = ({ children }) =
       const dbRecords = await getAllFromDB();
       let hasCustom = false;
       Object.keys(dbRecords).forEach((key) => {
+        // Never let stale IndexedDB cache override the master conference room scene
+        if (key.includes('01_start') || key.includes('kongokonferenz') || key.includes('start.png')) {
+          return;
+        }
         if (initialMap[key]) {
           initialMap[key].isLoaded = true;
           initialMap[key].url = dbRecords[key].dataUrl;
@@ -453,6 +459,15 @@ export const AssetProvider: React.FC<{ children: ReactNode }> = ({ children }) =
     let lookupKey = originalPath;
     if (lookupKey.startsWith('/')) lookupKey = lookupKey.slice(1);
     if (lookupKey.startsWith('images/')) lookupKey = lookupKey.replace('images/', '');
+
+    // Master conference room scene override: ALWAYS use user's attached authentic master image
+    if (
+      lookupKey.includes('01_start_konferenzraum') ||
+      lookupKey.includes('kongokonferenz') ||
+      lookupKey.includes('start.png')
+    ) {
+      return '/start.png?v=authentic_user_master_1884';
+    }
 
     // 1. Direct key in assets state
     if (assets[lookupKey]?.url) {

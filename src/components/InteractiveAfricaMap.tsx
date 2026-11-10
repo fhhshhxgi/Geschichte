@@ -139,13 +139,13 @@ export const InteractiveAfricaMap: React.FC<InteractiveAfricaMapProps> = ({
 
   // Regional camera state
   const [activeZoneKey, setActiveZoneKey] = useState<string>('continent');
-  const [autoZoomOnDecade, setAutoZoomOnDecade] = useState<boolean>(true);
+  const [autoZoomOnDecade, setAutoZoomOnDecade] = useState<boolean>(false);
   const [viewBoxCoords, setViewBoxCoords] = useState<[number, number, number, number]>([0, 0, 1000, 1050]);
 
   // Label display mode: 'classic' | 'hover-only' | 'full'
   const [labelMode, setLabelMode] = useState<'classic' | 'hover-only' | 'full'>('classic');
 
-  // Active layers
+  // Active layers (Clean, elegant, non-overloaded defaults)
   const [activeLayers, setActiveLayers] = useState<{
     territories: boolean;
     sources: boolean;
@@ -154,9 +154,9 @@ export const InteractiveAfricaMap: React.FC<InteractiveAfricaMapProps> = ({
     borders: boolean;
   }>({
     territories: true,
-    sources: true,
+    sources: false,
     resources: false,
-    resistance: true,
+    resistance: false,
     borders: false,
   });
 

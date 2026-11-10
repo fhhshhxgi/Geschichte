@@ -62,6 +62,16 @@ export const IntroSequence: React.FC<IntroSequenceProps> = ({ onComplete }) => {
       transition={{ duration: 1.2, ease: [0.16, 1, 0.3, 1] }}
       className="fixed inset-0 z-50 flex flex-col items-center justify-center bg-[#070504] text-[#ede5d8] overflow-hidden select-none"
     >
+      {/* Cinematic authentic conference room background */}
+      <div className="absolute inset-0 pointer-events-none overflow-hidden">
+        <img
+          src="/start.png?v=authentic_user_upload"
+          alt=""
+          className="w-full h-full object-cover opacity-25 filter blur-[1px] scale-105"
+        />
+        <div className="absolute inset-0 bg-gradient-to-t from-[#070504] via-[#070504]/75 to-[#070504]/95" />
+      </div>
+
       {/* Film grain and vignette */}
       <div className="absolute inset-0 pointer-events-none film-grain" />
       <div className="absolute inset-0 pointer-events-none vignette-radial" />
