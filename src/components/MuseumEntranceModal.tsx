@@ -206,18 +206,14 @@ export const MuseumEntranceModal: React.FC<MuseumEntranceModalProps> = ({
                 <div className="bg-[#18110b] p-3.5 rounded border border-[#342416] space-y-2">
                   <p><strong>Herausgeber &amp; Trägerschaft:</strong><br />
                   Digitales Dokumentationsarchiv Berliner Afrika-Konferenz 1884/85<br />
-                  Gemeinnützige Initiative für historische Fachdidaktik &amp; digitale Wissenschaftskommunikation</p>
-                  
-                  <p><strong>Projektleitung &amp; wissenschaftliche Redaktion:</strong><br />
-                  Arbeitsbereich Neuere Geschichte &amp; Kolonialismusforschung<br />
-                  Wilhelmstraße 77 (Historischer Schauplatz), Berlin</p>
+                  Cristian Liebrecht</p>
 
                   <p><strong>Kontakt &amp; Feedback:</strong><br />
                   E-Mail: <span className="text-[#c4a46a]">redaktion@afrika-konferenz-1884.org</span><br />
                   Web: https://afrika-konferenz-1884.org</p>
 
                   <p><strong>Verantwortlich für den Inhalt nach § 18 Abs. 2 MStV:</strong><br />
-                  Wissenschaftliches Kuratorium für historisch-kritische Quellenforschung.</p>
+                  Cristian Liebrecht.</p>
                 </div>
               </div>
             )}
