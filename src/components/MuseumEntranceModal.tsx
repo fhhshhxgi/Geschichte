@@ -210,7 +210,7 @@ export const MuseumEntranceModal: React.FC<MuseumEntranceModalProps> = ({
 
                   <p><strong>Kontakt &amp; Feedback:</strong><br />
                   E-Mail: <span className="text-[#c4a46a]">fhhshhxgi@gmail.com</span><br />
-                  Web: https://afrika-konferenz-1884.org</p>
+                  </p>
 
                   <p><strong>Verantwortlich für den Inhalt nach § 18 Abs. 2 MStV:</strong><br />
                   Cristian Liebrecht.</p>
