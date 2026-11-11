@@ -199,7 +199,7 @@ export const EmptyChairExhibit: React.FC<EmptyChairExhibitProps> = ({
                     im Tausch gegen billigen Kattunstoff, Alkohol oder bunte Glasperlen.
                   </p>
                   <div className="p-3 bg-[#1e150d] rounded border-l-2 border-[#ef4444] text-xs font-serif text-[#edd9b9]">
-                    <strong className="text-[#ef4444] block font-sans uppercase text-[10px] tracking-wider mb-1">Historisches Zeugnis:</strong>
+                    <strong className="text-[#ef4444] block font-sans uppercase text-[10px] tracking-wider mb-1">Historische Darstellung:</strong>
                     Karl Peters prahlte offen damit, Verträge durch Vorspiegelung falscher Tatsachen und Androhung von Waffengewalt erpresst zu haben.
                   </div>
                 </div>
