@@ -8,12 +8,16 @@ interface InteractiveHotspotProps {
   hotspot: Hotspot;
   onClick: (hotspot: Hotspot) => void;
   disabled?: boolean;
+  className?: string;
+  isTourHighlighted?: boolean;
 }
 
 export const InteractiveHotspot: React.FC<InteractiveHotspotProps> = ({
   hotspot,
   onClick,
   disabled = false,
+  className = '',
+  isTourHighlighted = false,
 }) => {
   const [isHovered, setIsHovered] = useState(false);
 
@@ -45,8 +49,12 @@ export const InteractiveHotspot: React.FC<InteractiveHotspotProps> = ({
         left: `${hotspot.x}%`,
         top: `${hotspot.y}%`,
       }}
-      className="absolute -translate-x-1/2 -translate-y-1/2 z-20 pointer-events-auto"
+      className={`absolute -translate-x-1/2 -translate-y-1/2 z-20 pointer-events-auto transition-all duration-300 ${className}`}
     >
+      {/* Tour Highlight Ping */}
+      {isTourHighlighted && (
+        <div className="absolute inset-0 -m-3 rounded-full bg-[#f59e0b]/30 border-2 border-[#f59e0b] animate-ping pointer-events-none z-10" />
+      )}
       <button
         type="button"
         onClick={handleClick}

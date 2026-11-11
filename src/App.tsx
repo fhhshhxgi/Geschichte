@@ -22,8 +22,8 @@ import { soundFx } from './utils/soundEffects';
 type SceneState = 'intro' | 'conference-room' | 'africa-absence' | 'africa-map' | 'imperialism' | 'dossier';
 
 function AppContent() {
-  const [currentScene, setCurrentScene] = useState<SceneState>('conference-room');
-  const [showSources, setShowSources] = useState<boolean>(false);
+  const [currentScene, setCurrentScene] = useState<SceneState>('intro');
+  const [showSourcesModal, setShowSourcesModal] = useState<boolean>(false);
   const [showEntranceModal, setShowEntranceModal] = useState<boolean>(false);
   const [showLegalNotice, setShowLegalNotice] = useState<boolean>(false);
   const [targetHotspotId, setTargetHotspotId] = useState<string | null>(null);
@@ -156,7 +156,7 @@ function AppContent() {
         <TopNav
           currentScene={currentScene}
           onNavigate={handleNavigateNav}
-          onOpenSources={() => setShowSources(true)}
+          onOpenSources={() => setShowSourcesModal(true)}
           onOpenLegal={() => setShowLegalNotice(true)}
           onReplayIntro={() => setCurrentScene('intro')}
         />
@@ -180,7 +180,7 @@ function AppContent() {
             <div className="pt-14 w-full">
               <InteractiveAfricaMap
                 onBackToConferenceRoom={handleBackToRoom}
-                initialYear={1885}
+                initialYear={1880}
               />
             </div>
           )}
@@ -204,10 +204,10 @@ function AppContent() {
         </SceneTransition>
       </main>
 
-      {/* Sources and Academic Citations Modal */}
+      {/* Historical Primary Source Modal featuring exclusively the attached document */}
       <SourcesModal
-        isOpen={showSources}
-        onClose={() => setShowSources(false)}
+        isOpen={showSourcesModal}
+        onClose={() => setShowSourcesModal(false)}
       />
 
       {/* Interactive Asset Import Modal */}

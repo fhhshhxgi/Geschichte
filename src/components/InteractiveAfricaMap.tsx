@@ -6,13 +6,10 @@ import {
   ColonialPowerId,
   RESOURCE_HOTSPOTS,
   RESISTANCE_MOVEMENTS,
-  ARTIFICIAL_BORDERS,
   ResourceHotspot,
   ResistanceMovement,
-  ArtificialBorderExample,
 } from '../data/africaMapData';
 import { ACCURATE_AFRICA_TERRITORIES } from '../data/accurateAfricaTerritories';
-import { MAP_PRIMARY_SOURCES, MapPrimarySource } from '../data/mapPrimarySources';
 import { AfricanTerritory } from '../data/africaMapData';
 import { soundFx } from '../utils/soundEffects';
 import { audioManager } from '../utils/audioManager';
@@ -125,7 +122,7 @@ const MADAGASCAR_OUTLINE_PATH = `
 
 export const InteractiveAfricaMap: React.FC<InteractiveAfricaMapProps> = ({
   onBackToConferenceRoom,
-  initialYear = 1885,
+  initialYear = 1880,
 }) => {
   const [selectedYear, setSelectedYear] = useState<number>(initialYear);
   const [isPlaying, setIsPlaying] = useState<boolean>(false);
@@ -133,9 +130,6 @@ export const InteractiveAfricaMap: React.FC<InteractiveAfricaMapProps> = ({
   const [hoveredTerritory, setHoveredTerritory] = useState<AfricanTerritory | null>(null);
   const [selectedResource, setSelectedResource] = useState<ResourceHotspot | null>(null);
   const [selectedResistance, setSelectedResistance] = useState<ResistanceMovement | null>(null);
-  const [selectedBorder, setSelectedBorder] = useState<ArtificialBorderExample | null>(null);
-  const [selectedSource, setSelectedSource] = useState<MapPrimarySource | null>(null);
-  const [hoveredSource, setHoveredSource] = useState<MapPrimarySource | null>(null);
 
   // Regional camera state
   const [activeZoneKey, setActiveZoneKey] = useState<string>('continent');
@@ -148,16 +142,12 @@ export const InteractiveAfricaMap: React.FC<InteractiveAfricaMapProps> = ({
   // Active layers (Clean, elegant, non-overloaded defaults)
   const [activeLayers, setActiveLayers] = useState<{
     territories: boolean;
-    sources: boolean;
     resources: boolean;
     resistance: boolean;
-    borders: boolean;
   }>({
     territories: true,
-    sources: false,
     resources: false,
     resistance: false,
-    borders: false,
   });
 
   // Filter by power
@@ -244,14 +234,14 @@ export const InteractiveAfricaMap: React.FC<InteractiveAfricaMapProps> = ({
   }, [isPlaying]);
 
   const currentPhase =
-    MAP_YEAR_PHASES.find((p) => p.year === selectedYear) || MAP_YEAR_PHASES[1];
+    MAP_YEAR_PHASES.find((p) => p.year === selectedYear) || MAP_YEAR_PHASES[0];
 
   const handleYearChange = (year: number) => {
     soundFx.playEpochTransition();
     setSelectedYear(year);
   };
 
-  const toggleLayer = (layer: 'territories' | 'sources' | 'resources' | 'resistance' | 'borders') => {
+  const toggleLayer = (layer: 'territories' | 'resources' | 'resistance') => {
     soundFx.playSubtleTick();
     setActiveLayers((prev) => ({ ...prev, [layer]: !prev[layer] }));
   };
@@ -261,17 +251,6 @@ export const InteractiveAfricaMap: React.FC<InteractiveAfricaMapProps> = ({
     setSelectedTerritory(territory);
     setSelectedResource(null);
     setSelectedResistance(null);
-    setSelectedBorder(null);
-    setSelectedSource(null);
-  };
-
-  const handleSourceClick = (source: MapPrimarySource) => {
-    soundFx.playChamberTone(false);
-    setSelectedSource(source);
-    setSelectedTerritory(null);
-    setSelectedResource(null);
-    setSelectedResistance(null);
-    setSelectedBorder(null);
   };
 
   const handleResourceClick = (res: ResourceHotspot) => {
@@ -279,8 +258,6 @@ export const InteractiveAfricaMap: React.FC<InteractiveAfricaMapProps> = ({
     setSelectedResource(res);
     setSelectedTerritory(null);
     setSelectedResistance(null);
-    setSelectedBorder(null);
-    setSelectedSource(null);
   };
 
   const handleResistanceClick = (res: ResistanceMovement) => {
@@ -288,25 +265,12 @@ export const InteractiveAfricaMap: React.FC<InteractiveAfricaMapProps> = ({
     setSelectedResistance(res);
     setSelectedTerritory(null);
     setSelectedResource(null);
-    setSelectedBorder(null);
-    setSelectedSource(null);
-  };
-
-  const handleBorderClick = (border: ArtificialBorderExample) => {
-    soundFx.playSubtleTick();
-    setSelectedBorder(border);
-    setSelectedTerritory(null);
-    setSelectedResource(null);
-    setSelectedResistance(null);
-    setSelectedSource(null);
   };
 
   const closeAnyDrawer = () => {
     setSelectedTerritory(null);
     setSelectedResource(null);
     setSelectedResistance(null);
-    setSelectedBorder(null);
-    setSelectedSource(null);
   };
 
   const toggle1880vs1914 = () => {
@@ -528,49 +492,9 @@ export const InteractiveAfricaMap: React.FC<InteractiveAfricaMapProps> = ({
             <div className="absolute inset-0 bg-[#090704] pointer-events-none" />
             <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_45%,#1c150e_0%,#110c08_55%,#070503_100%)] opacity-90 pointer-events-none" />
 
-            {/* Interactive Floating Hover Tooltip for Primary Sources */}
-            <AnimatePresence>
-              {hoveredSource && (
-                <motion.div
-                  initial={{ opacity: 0, scale: 0.93, y: 5 }}
-                  animate={{ opacity: 1, scale: 1, y: 0 }}
-                  exit={{ opacity: 0, scale: 0.95 }}
-                  transition={{ duration: 0.15 }}
-                  className="absolute pointer-events-none z-40 bg-[#16100c]/98 backdrop-blur-md border-2 border-[#d97706] p-3.5 rounded shadow-[0_20px_40px_rgba(0,0,0,0.9)] text-xs space-y-2 min-w-[260px] max-w-[340px]"
-                  style={{
-                    left: `${Math.min(75, Math.max(25, (hoveredSource.coords[0] / 1000) * 100))}%`,
-                    top: `${Math.min(80, Math.max(20, (hoveredSource.coords[1] / 1050) * 100))}%`,
-                    transform: 'translate(-50%, -115%)',
-                  }}
-                >
-                  <div className="flex items-center justify-between gap-2 border-b border-[#382d22] pb-1.5">
-                    <span className="font-cinzel text-xs font-bold text-[#fef08a] flex items-center gap-1.5">
-                      <span>📜</span>
-                      <span>{hoveredSource.title}</span>
-                    </span>
-                    <span className="text-[10px] px-1.5 py-0.5 rounded bg-[#78350f]/80 text-[#fef3c7] font-mono shrink-0">
-                      {hoveredSource.year}
-                    </span>
-                  </div>
-
-                  <blockquote className="text-[11px] font-serif italic text-[#edd9b9] leading-relaxed bg-[#241a12] p-2 rounded border-l-2 border-[#f59e0b]">
-                    {hoveredSource.quote}
-                  </blockquote>
-
-                  <div className="text-[10px] text-[#b8a690] space-y-0.5">
-                    <p><strong>Autor:</strong> {hoveredSource.author} ({hoveredSource.role})</p>
-                    <p className="truncate"><strong>Quelle:</strong> {hoveredSource.archivalSource}</p>
-                  </div>
-                  <span className="text-[9px] text-[#f59e0b] block pt-0.5 text-right font-cinzel">
-                    Klicken für vollständiges Aktenzitat →
-                  </span>
-                </motion.div>
-              )}
-            </AnimatePresence>
-
             {/* Interactive Floating Hover Tooltip for Territories */}
             <AnimatePresence>
-              {hoveredTerritory && !selectedTerritory && !hoveredSource && (
+              {hoveredTerritory && !selectedTerritory && (
                 <motion.div
                   initial={{ opacity: 0, scale: 0.95 }}
                   animate={{ opacity: 1, scale: 1 }}
@@ -847,118 +771,6 @@ export const InteractiveAfricaMap: React.FC<InteractiveAfricaMapProps> = ({
                 <ellipse cx="440" cy="440" rx="16" ry="12" />
               </g>
 
-              {/* PRIMARY HISTORICAL SOURCE CITATION MARKERS (TOGGLEABLE OVERLAY) */}
-              {activeLayers.sources && (
-                <g id="map-primary-sources-group">
-                  {MAP_PRIMARY_SOURCES.map((source) => {
-                    const isSelected = selectedSource?.id === source.id;
-                    const isHovered = hoveredSource?.id === source.id;
-                    const badgeColor =
-                      source.category === 'atrocity'
-                        ? '#ef4444'
-                        : source.category === 'resistance'
-                        ? '#22c55e'
-                        : source.category === 'treaty'
-                        ? '#f59e0b'
-                        : '#3b82f6';
-
-                    return (
-                      <g
-                        key={`source-pin-${source.id}`}
-                        transform={`translate(${source.coords[0]}, ${source.coords[1]})`}
-                        onClick={() => handleSourceClick(source)}
-                        onMouseEnter={() => setHoveredSource(source)}
-                        onMouseLeave={() => setHoveredSource(null)}
-                        className="cursor-pointer group"
-                      >
-                        {/* Antique Wax Seal / Parchment Medallion */}
-                        <circle
-                          cx="0"
-                          cy="0"
-                          r={isSelected || isHovered ? 20 : 15}
-                          fill="none"
-                          stroke={badgeColor}
-                          strokeWidth="1.5"
-                          opacity="0.8"
-                          className="animate-pulse"
-                        />
-                        <circle
-                          cx="0"
-                          cy="0"
-                          r={isSelected || isHovered ? 16 : 13}
-                          fill="#17110c"
-                          stroke="#c4a46a"
-                          strokeWidth={isSelected || isHovered ? 2.5 : 1.6}
-                          className="transition-all duration-300"
-                        />
-                        <circle
-                          cx="0"
-                          cy="0"
-                          r={isSelected || isHovered ? 11 : 9}
-                          fill={badgeColor}
-                          fillOpacity="0.3"
-                        />
-                        <text
-                          x="0"
-                          y="4"
-                          textAnchor="middle"
-                          fontSize={isSelected || isHovered ? '12' : '10'}
-                          className="pointer-events-none select-none font-bold"
-                        >
-                          📜
-                        </text>
-                      </g>
-                    );
-                  })}
-                </g>
-              )}
-
-              {/* ARTIFICIAL BORDERS OVERLAY (The Ruler of Berlin) */}
-              {activeLayers.borders && (
-                <g id="artificial-borders-group">
-                  {ARTIFICIAL_BORDERS.map((border) => {
-                    const isSelected = selectedBorder?.id === border.id;
-                    return (
-                      <g
-                        key={`border-${border.id}`}
-                        onClick={() => handleBorderClick(border)}
-                        className="cursor-pointer group"
-                      >
-                        <line
-                          x1={border.lineCoords[0][0]}
-                          y1={border.lineCoords[0][1]}
-                          x2={border.lineCoords[1][0]}
-                          y2={border.lineCoords[1][1]}
-                          stroke="#ef4444"
-                          strokeWidth={isSelected ? 5 : 3.5}
-                          strokeDasharray="6 4"
-                          className="animate-pulse"
-                        />
-                        <circle
-                          cx={(border.lineCoords[0][0] + border.lineCoords[1][0]) / 2}
-                          cy={(border.lineCoords[0][1] + border.lineCoords[1][1]) / 2}
-                          r="12"
-                          fill="#17120e"
-                          stroke="#ef4444"
-                          strokeWidth="2"
-                        />
-                        <text
-                          x={(border.lineCoords[0][0] + border.lineCoords[1][0]) / 2}
-                          y={(border.lineCoords[0][1] + border.lineCoords[1][1]) / 2 + 4}
-                          textAnchor="middle"
-                          fill="#ef4444"
-                          fontSize="10"
-                          fontFamily="sans-serif"
-                          fontWeight="bold"
-                        >
-                          📏
-                        </text>
-                      </g>
-                    );
-                  })}
-                </g>
-              )}
-
               {/* RESOURCE HOTSPOTS OVERLAY */}
               {activeLayers.resources && (
                 <g id="resource-hotspots-group">
@@ -1061,17 +873,6 @@ export const InteractiveAfricaMap: React.FC<InteractiveAfricaMapProps> = ({
                 🗺️ Territorien
               </button>
               <button
-                onClick={() => toggleLayer('sources')}
-                className={`px-2.5 py-1 rounded border transition-colors cursor-pointer ${
-                  activeLayers.sources
-                    ? 'bg-[#78350f]/80 border-[#f59e0b] text-[#fef08a] font-semibold'
-                    : 'bg-[#18130e] border-[#382d22] text-[#806f5c]'
-                }`}
-                title="Historische Zitate und Primärquellen auf der Karte"
-              >
-                📜 Primärquellen &amp; Zitate
-              </button>
-              <button
                 onClick={() => toggleLayer('resistance')}
                 className={`px-2.5 py-1 rounded border transition-colors cursor-pointer ${
                   activeLayers.resistance
@@ -1090,16 +891,6 @@ export const InteractiveAfricaMap: React.FC<InteractiveAfricaMapProps> = ({
                 }`}
               >
                 🩸 Rohstoffraub
-              </button>
-              <button
-                onClick={() => toggleLayer('borders')}
-                className={`px-2.5 py-1 rounded border transition-colors cursor-pointer ${
-                  activeLayers.borders
-                    ? 'bg-[#450a0a] border-[#ef4444] text-[#fecaca]'
-                    : 'bg-[#18130e] border-[#382d22] text-[#806f5c]'
-                }`}
-              >
-                📏 Linealgrenzen
               </button>
             </div>
 
@@ -1186,74 +977,6 @@ export const InteractiveAfricaMap: React.FC<InteractiveAfricaMapProps> = ({
 
           {/* Dynamic Active Drawer depending on click */}
           <AnimatePresence mode="wait">
-            {/* Primary Source Document Detail Drawer */}
-            {selectedSource && (
-              <motion.div
-                key={`drawer-source-${selectedSource.id}`}
-                initial={{ opacity: 0, y: 15 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: 15 }}
-                transition={{ duration: 0.25 }}
-                className="bg-[#16100c] rounded border-2 border-[#d97706]/70 p-4 sm:p-5 shadow-2xl space-y-3"
-              >
-                <div className="flex items-start justify-between border-b border-[#382d22] pb-2">
-                  <div>
-                    <span className="text-[10px] uppercase font-cinzel text-[#f59e0b] tracking-widest flex items-center gap-1.5">
-                      <span>📜</span>
-                      <span>Historische Primärquelle ({selectedSource.year})</span>
-                    </span>
-                    <h3 className="text-xl font-garamond font-bold text-[#f5ebd9]">
-                      {selectedSource.title}
-                    </h3>
-                  </div>
-                  <button
-                    onClick={closeAnyDrawer}
-                    className="text-xs text-[#a89680] hover:text-[#fff] p-1.5 rounded border border-[#3e3326] cursor-pointer"
-                  >
-                    ✕
-                  </button>
-                </div>
-
-                <div className="text-xs leading-relaxed font-prose text-[#d6c7b2] space-y-3">
-                  <div className="bg-[#241a12] p-3 rounded border border-[#4a3826] space-y-1">
-                    <p className="text-[11px] text-[#f5ebd9]">
-                      <strong>Verfasser:</strong> {selectedSource.author}
-                    </p>
-                    <p className="text-[10px] text-[#a89680]">
-                      <strong>Rolle &amp; Funktion:</strong> {selectedSource.role}
-                    </p>
-                    <p className="text-[10px] text-[#c4a46a]">
-                      <strong>Ort &amp; Datum:</strong> {selectedSource.location} · {selectedSource.date}
-                    </p>
-                  </div>
-
-                  <div className="p-3.5 bg-[#1f150e] rounded border-l-3 border-[#f59e0b] space-y-1.5">
-                    <span className="text-[10px] uppercase font-cinzel text-[#f59e0b] block font-bold">
-                      Originales Zitat / Aktenauszug:
-                    </span>
-                    <blockquote className="italic font-serif text-[12px] text-[#fef08a] leading-relaxed">
-                      {selectedSource.quote}
-                    </blockquote>
-                  </div>
-
-                  <div className="space-y-1">
-                    <span className="text-[10px] uppercase font-cinzel text-[#c4a46a] block">
-                      Historischer Kontext &amp; Analyse:
-                    </span>
-                    <p className="text-[11px] text-[#c4b5a2] leading-relaxed">
-                      {selectedSource.historicalContext}
-                    </p>
-                  </div>
-
-                  <div className="pt-2 border-t border-[#2d2217] flex items-center justify-between text-[10px] text-[#8c7b68]">
-                    <span>Archivnachweis:</span>
-                    <span className="font-mono text-[#edd9b9] truncate max-w-[200px]" title={selectedSource.archivalSource}>
-                      {selectedSource.archivalSource}
-                    </span>
-                  </div>
-                </div>
-              </motion.div>
-            )}
 
             {/* Territory Detail Drawer */}
             {selectedTerritory && (
@@ -1470,59 +1193,8 @@ export const InteractiveAfricaMap: React.FC<InteractiveAfricaMapProps> = ({
               </motion.div>
             )}
 
-            {/* Artificial Border Example Drawer */}
-            {selectedBorder && (
-              <motion.div
-                key={`drawer-border-${selectedBorder.id}`}
-                initial={{ opacity: 0, y: 15 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: 15 }}
-                transition={{ duration: 0.25 }}
-                className="bg-[#140f0c] rounded border border-[#ef4444]/60 p-4 sm:p-5 shadow-2xl space-y-3"
-              >
-                <div className="flex items-start justify-between border-b border-[#382d22] pb-2">
-                  <div>
-                    <span className="text-[10px] uppercase font-cinzel text-[#ef4444] tracking-widest flex items-center gap-1.5">
-                      <span>📏</span>
-                      <span>Das Lineal von Berlin</span>
-                    </span>
-                    <h3 className="text-xl font-garamond font-semibold text-[#f5ebd9]">
-                      {selectedBorder.name}
-                    </h3>
-                  </div>
-                  <button
-                    onClick={closeAnyDrawer}
-                    className="text-xs text-[#a89680] hover:text-[#fff] p-1.5 rounded border border-[#3e3326] cursor-pointer"
-                  >
-                    ✕
-                  </button>
-                </div>
-
-                <div className="text-xs leading-relaxed font-prose text-[#d6c7b2] space-y-2.5">
-                  <div className="bg-[#241a12] p-2.5 rounded border border-[#4a3826]">
-                    <span className="text-[10px] uppercase font-cinzel text-[#c4a46a] block">
-                      Zerschnittenes Volk / Kulturraum:
-                    </span>
-                    <strong className="text-[#f5ebd9] text-xs">
-                      {selectedBorder.splitEthnicGroup}
-                    </strong>
-                    <span className="text-[11px] text-[#a89680] block mt-1">
-                      Betroffene Nationalstaaten heute: {selectedBorder.affectedStatesToday}
-                    </span>
-                  </div>
-
-                  <div>
-                    <h4 className="font-cinzel text-[11px] text-[#c4a46a] uppercase tracking-wider mb-0.5">
-                      Koloniale Willkür &amp; Nachwirkungen
-                    </h4>
-                    <p>{selectedBorder.context}</p>
-                  </div>
-                </div>
-              </motion.div>
-            )}
-
             {/* Default State: Overview Card if no item selected */}
-            {!selectedTerritory && !selectedResource && !selectedResistance && !selectedBorder && !selectedSource && (
+            {!selectedTerritory && !selectedResource && !selectedResistance && (
               <div className="bg-[#140f0c] rounded border border-[#3e3225] p-4 sm:p-5 shadow-xl space-y-3">
                 <span className="text-[10px] uppercase font-cinzel text-[#c4a46a] tracking-widest block">
                   Interaktive Analyse
@@ -1531,20 +1203,20 @@ export const InteractiveAfricaMap: React.FC<InteractiveAfricaMapProps> = ({
                   Erkunde den Kontinent im Wandel
                 </h3>
                 <p className="text-xs font-prose text-[#b8a691] leading-relaxed">
-                  Fahre mit der Maus über die Karte für Kurzinformationen oder klicke auf ein Territorium oder ein Primärquellen-Siegel 📜, um die koloniale Aufteilung und Originaldokumente zu studieren.
+                  Fahre mit der Maus über die Karte für Kurzinformationen oder klicke auf ein Territorium, um die koloniale Aufteilung, indigene Herrscher und historische Konsequenzen zu studieren.
                 </p>
 
                 <div className="space-y-2 pt-2 border-t border-[#2a2016] text-xs font-serif text-[#d6c7b2]">
                   <div className="flex items-start gap-2">
-                    <span className="text-[#f59e0b] font-bold">📜</span>
+                    <span className="text-[#c4a46a] font-bold">1.</span>
                     <span>
-                      <strong>Primärquellen &amp; Zitate:</strong> Klicke auf die goldenen Siegel-Pins, um historische Originalzitate (Leopold II., Bismarck, Yaa Asantewaa, Menelik II.) zu lesen.
+                      <strong>Zeitschieberegler oben (1880–1914):</strong> Verfolge, wie sich der Kontinent von 1880 (nur 11% kolonisiert) bis 1914 (über 92% unter europäischer Herrschaft) dramatisch veränderte.
                     </span>
                   </div>
                   <div className="flex items-start gap-2">
-                    <span className="text-[#c4a46a] font-bold">1.</span>
+                    <span className="text-[#22c55e] font-bold">2.</span>
                     <span>
-                      <strong>Zeitschieberegler oben:</strong> Verfolge, wie sich der Kontinent von 1880 (nur 11% kolonisiert) bis 1914 (über 92% unter europäischer Herrschaft) veränderte.
+                      <strong>⚔️ Schlacht-Pins:</strong> Erfahre mehr über den antikolonialen Widerstand wie die Schlacht von Adwa (1896), den Maji-Maji-Aufstand und den Völkermord an den Herero und Nama.
                     </span>
                   </div>
                   <div className="flex items-start gap-2">

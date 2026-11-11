@@ -19,48 +19,128 @@ const TOUR_STATIONS = [
     stepNumber: 1,
     title: 'Otto von Bismarck · Deutsches Reich',
     subtitle: 'Reichskanzler & Konferenzpräsident',
-    summary: 'Bismarck eröffnet die Konferenz in der Wilhelmstraße 77. Vorgeblich als neutraler „ehrlicher Makler“ zur friedlichen Einigung – in Wahrheit zur Ablenkung Frankreichs von Revancheplänen nach 1871.',
-    quote: '„Alle Regierungen teilen den Wunsch, die Eingeborenen Afrikas an die Zivilisation heranzuführen...“',
+    summary: 'Bismarck eröffnet die Konferenz in der Wilhelmstraße 77. Vorgeblich als neutraler „ehrlicher Makler“ zur friedlichen Streitbeilegung – in Wahrheit zur Ablenkung Frankreichs von Revancheplänen und zur Absicherung der deutschen Kolonialansprüche.',
+    quote: '„Alle Regierungen teilen den Wunsch, die Eingeborenen Afrikas an die Zivilisation heranzuführen...“ — Eröffnungsrede 1884',
   },
   {
     targetId: 'map',
     stepNumber: 2,
     title: 'Die Wandkarte von Afrika',
     subtitle: 'Das Lineal über einen Kontinent',
-    summary: 'Direkt im Rücken der Konferenzleitung hängt die riesige Projektionsfläche. Hier zogen europäische Diplomaten über 30.000 Kilometer künstlicher Grenzen quer durch indigene Reiche.',
+    summary: 'Direkt hinter der Konferenzleitung hängt die monumentale Wandkarte. Sie diente den europäischen Diplomaten als Projektionsfläche, um mit Zirkel und Lineal über 30.000 Kilometer künstlicher Grenzen durch bestehende Reiche zu ziehen.',
     quote: '„Wir zogen Linien auf Karten von Ländern, über die wir kaum etwas wussten.“ — Lord Salisbury',
   },
   {
-    targetId: 'belgium',
+    targetId: 'france',
     stepNumber: 3,
-    title: 'König Leopold II. & Belgien',
-    subtitle: 'Humanitäre Maske für privaten Terror',
-    summary: 'Baron Lambermont erwirkt die völkerrechtliche Anerkennung des Kongo-Freistaats als persönliches Privateigentum Leopolds II. – mit der Folge von bis zu 10 Millionen Toten beim Kautschukraub.',
-    quote: '„Ich will meinen Anteil an diesem herrlichen afrikanischen Kuchen nicht verpassen.“ — Leopold II.',
+    title: 'Baron Alphonse de Courcel · Frankreich',
+    subtitle: 'Konsolidierung in West- & Zentralafrika',
+    summary: 'Frankreichs Chefunterhändler verbündet sich taktisch mit Bismarck. Frankreich sichert sich das riesige Sahel- und Kongobecken-Nordufer und erwirbt das vertragliche Vorkaufsrecht auf das gesamte Territorium Leopolds II.',
+    quote: '„Eine deutsch-französische Einigung, um britische Alleingänge an den afrikanischen Strömen zu brechen.“',
   },
   {
     targetId: 'britain',
     stepNumber: 4,
     title: 'Sir Edward Malet · Großbritannien',
     subtitle: 'Die Vormacht der Fluss- und Seewege',
-    summary: 'Großbritannien blockiert internationale Einmischung auf dem schiffbaren Niger und festigt die strategische Achse Ägypten–Südafrika („Kap-Kairo-Linie“).',
-    quote: '„Großbritannien garantiert seit Jahrzehnten Handel und Ordnung auf diesen Gewässern.“',
+    summary: 'Großbritannien blockiert internationale Einmischung auf dem schiffbaren Niger und festigt die strategische Handelsachse von Kairo nach Kapstadt. Malet wahrt die britische Dominanz im Welthandel.',
+    quote: '„Großbritannien garantiert seit Jahrzehnten Handel und Ordnung auf diesen Gewässern.“ — Malet vor der Niger-Kommission',
   },
   {
-    targetId: 'france',
+    targetId: 'belgium',
     stepNumber: 5,
-    title: 'Baron de Courcel · Frankreich',
-    subtitle: 'Konsolidierung in West- & Zentralafrika',
-    summary: 'Frankreich sichert sich den riesigen Sahel- und Äquatorraum und erwirbt das vertragliche Vorkaufsrecht auf den Kongo, falls Leopolds Privatgesellschaft scheitern sollte.',
-    quote: '„Eine deutsch-französische Einigung gegen britische Alleingänge.“',
+    title: 'Auguste Lambermont · Belgien & Leopold II.',
+    subtitle: 'Humanitäre Maske für privaten Terror',
+    summary: 'Lambermont erreicht die völkerrechtliche Anerkennung der Internationalen Kongo-Gesellschaft als Privatstaat für König Leopold II. Dies führt zum berüchtigten Kautschuk-Terror mit Millionen Opfern.',
+    quote: '„Ich will meinen Anteil an diesem herrlichen afrikanischen Kuchen nicht verpassen.“ — König Leopold II.',
+  },
+  {
+    targetId: 'portugal',
+    stepNumber: 6,
+    title: 'Marquês de Penafiel · Portugal',
+    subtitle: 'Verdrängung der ältesten Kolonialmacht',
+    summary: 'Portugal berief sich auf Entdeckerrechte seit dem 15. Jahrhundert. Auf der Konferenz wird jedoch das Prinzip der „effektiven Okkupation“ beschlossen: Nur reale militärische Besetzung begründet künftig Besitz.',
+    quote: '„Unsere historischen Rechte an der Kongomündung weichen dem Diktat der neuen Industriemächte.“',
+  },
+  {
+    targetId: 'italien',
+    stepNumber: 7,
+    title: 'Graf Edoardo de Launay · Italien',
+    subtitle: 'Prestigekolonialismus am Horn von Afrika',
+    summary: 'Der junge italienische Nationalstaat suchte Anschluss an die Großmächte. In Berlin holt sich Rom diplomatische Rückendeckung für Kolonialexpansionen in Eritrea und Somalia, scheitert jedoch 1896 bei Adwa an Äthiopien.',
+    quote: '„Italien beansprucht seinen gebührenden Platz unter den zivilisierenden Völkern des Mittelmeers und Afrikas.“',
+  },
+  {
+    targetId: 'austria-hungary',
+    stepNumber: 8,
+    title: 'Graf Emmerich Széchényi · Österreich-Ungarn',
+    subtitle: 'Bündnistreue des Zweibunds',
+    summary: 'Ohne eigene Kolonialflotte fungiert Wien als verlässlicher diplomatischer Partner des Deutschen Reiches. Széchényi stimmt für Freihandel, um habsburgischen Kaufleuten zollfreien Marktzugang zu sichern.',
+    quote: '„Österreich-Ungarns Interesse gilt dem Gleichgewicht der europäischen Mächte und dem freien Handel.“',
+  },
+  {
+    targetId: 'russia',
+    stepNumber: 9,
+    title: 'Graf Pyotr Kapnist · Russland',
+    subtitle: 'Geopolitisches Schachspiel gegen London',
+    summary: 'Das Zarenreich hat keine kolonialen Ambitionen in Afrika. Kapnist nutzt die Verhandlungen jedoch als Hebel im „Great Game“, um britische Streitkräfte in Afrika zu binden und Russlands Position in Zentralasien zu stärken.',
+    quote: '„Jede Bindung britischer Ambitionen in Übersee entlastet unsere Grenzen in Asien.“',
+  },
+  {
+    targetId: 'ottoman',
+    stepNumber: 10,
+    title: 'Mehmed Said Pasha · Osmanisches Reich',
+    subtitle: 'Die Hohe Pforte am Tisch der Mächte',
+    summary: 'Als einziger islamischer Konferenzstaat protestiert Said Pasha gegen die Auslöschung osmanischer Oberhoheit in Nordafrika (Ägypten, Tripolitanien). Die europäischen Mächte übergehen seine Einwände schlichtweg.',
+    quote: '„Die Hohe Pforte wahrt die unveräußerlichen Souveränitätsrechte des Sultans über die Provinzen Afrikas.“',
+  },
+  {
+    targetId: 'spain',
+    stepNumber: 11,
+    title: 'Francisco Merry y Colom · Spanien',
+    subtitle: 'Verteidigung schwindender Enklaven',
+    summary: 'Nach dem Zerfall des südamerikanischen Kolonialreichs kämpft Madrid in Berlin um die völkerrechtliche Anerkennung kleinerer Küstenenklaven (Río Muni, Río de Oro und Inseln im Golf von Guinea).',
+    quote: '„Spanien verteidigt seine verbrieften Verträge an den Küsten Westafrikas gegen expansive Neulinge.“',
+  },
+  {
+    targetId: 'netherlands',
+    stepNumber: 12,
+    title: 'Frederik van Bylandt · Niederlande',
+    subtitle: 'Das Diktat der Handelshäuser am Unterkongo',
+    summary: 'Die niederländische Handelsgesellschaft NAHV betrieb Dutzende Faktoreien am Kongo. Bylandt setzt den absoluten Freihandel und Zollfreiheit durch, bevor Leopolds Monopole die Kaufleute verdrängen.',
+    quote: '„Freie Schifffahrt und Zollfreiheit für alle Flaggen – das ist das Lebenselixier des Welthandels.“',
+  },
+  {
+    targetId: 'usa',
+    stepNumber: 13,
+    title: 'John A. Kasson · USA',
+    subtitle: 'Diplomatischer Geburtshelfer für Leopold II.',
+    summary: 'Die USA hatten bereits vor der Konferenz als erste Nation die Flagge von Leopolds Kongo-Gesellschaft als befreundeten Staat anerkannt. Kasson legitimiert das Projekt unter humanitärer Antisklaverei-Rhetorik.',
+    quote: '„Die Vereinigten Staaten begrüßen jede Ordnung, die Aufklärung und freien Handel in das Innere Afrikas trägt.“',
+  },
+  {
+    targetId: 'denmark',
+    stepNumber: 14,
+    title: 'Carl Emil Vind · Dänemark',
+    subtitle: 'Neutrale Seefahrt & multilaterales Völkerrecht',
+    summary: 'Dänemark hatte seine afrikanischen Forts 1850 verkauft. Vind unterstützt die Konferenzakte, um dänischen Schiffen weltweite Gleichberechtigung und Quarantänestandards ohne Diskriminierung zu sichern.',
+    quote: '„Als neutrale seefahrende Nation unterstützen wir die universelle Geltung internationaler Schifffahrtsnormen.“',
+  },
+  {
+    targetId: 'sweden-norway',
+    stepNumber: 15,
+    title: 'Freiherr Gillis Bildt · Schweden-Norwegen',
+    subtitle: 'Maritime Interessen der nordischen Flotte',
+    summary: 'Schweden-Norwegen besaß eine der größten Handelsmarinen der Welt. Zahlreiche skandinavische Offiziere und Kapitäne heuerten später auf den Kongoschiffen und in den Verwaltungen an.',
+    quote: '„Freier Zugang für unsere Handelsflotte zu allen Flussläufen und Häfen ohne diskriminierende Abgaben.“',
   },
   {
     targetId: 'absence',
-    stepNumber: 6,
+    stepNumber: 16,
     title: 'Der Leere Stuhl · Afrika',
-    subtitle: 'Die fundamentale historische Ungerechtigkeit',
-    summary: '14 Mächte verhandeln über das Schicksal von über 250 Millionen Menschen. Kein einziger afrikanischer Vertreter ist eingeladen. Afrika wird juristisch zur „Terra Nullius“ deklariert.',
-    quote: '„Man sprach über uns, ohne uns. Als existierten wir auf unserem eigenen Kontinent nicht.“',
+    subtitle: 'Das fundamentale historische Unrecht',
+    summary: '14 Mächte verhandeln über das Schicksal von über 250 Millionen Menschen. Kein einziger afrikanischer Vertreter ist eingeladen. Afrika wird juristisch zur „Terra Nullius“ (herrenlosem Land) deklariert und willkürlich zerteilt.',
+    quote: '„Man sprach über uns, ohne uns. Als existierten wir auf unserem eigenen Heimatkontinent rechtlich nicht.“',
   },
 ];
 
@@ -83,7 +163,7 @@ export const ConferenceRoom: React.FC<ConferenceRoomProps> = ({
 
   // Active target: null = full room overview
   const [activeTarget, setActiveTarget] = useState<DelegationHotspot | null>(null);
-  const [activeTab, setActiveTab] = useState<'uebersicht' | 'interessen' | 'folgen' | 'quellen'>('uebersicht');
+  const [activeTab, setActiveTab] = useState<'uebersicht' | 'interessen' | 'folgen'>('uebersicht');
   const [isPortraitLightbox, setIsPortraitLightbox] = useState<boolean>(false);
 
   // Guided Tour & Filter Controls
@@ -382,46 +462,33 @@ export const ConferenceRoom: React.FC<ConferenceRoomProps> = ({
                     const isTourHighlighted = isTourActive && TOUR_STATIONS[tourStep]?.targetId === hotspot.id;
 
                     return (
-                      <div
-                        key={`room-hotspot-wrapper-${hotspot.id}`}
-                        className={`transition-all duration-300 ${
-                          isTourActive && !isTourHighlighted ? 'opacity-30 scale-90' : 'opacity-100 scale-100'
-                        }`}
-                      >
-                        {isTourHighlighted && (
-                          <div
-                            style={{
-                              left: `${hotspot.hotspotX}%`,
-                              top: `${hotspot.hotspotY}%`,
-                            }}
-                            className="absolute -translate-x-1/2 -translate-y-1/2 w-20 h-20 rounded-full bg-[#f59e0b]/30 border-2 border-[#f59e0b] animate-ping pointer-events-none z-30"
-                          />
-                        )}
-                        <InteractiveHotspot
-                          hotspot={{
-                            id: hotspot.id,
-                            label: hotspot.country,
-                            subLabel: hotspot.representative
-                              ? `${hotspot.representative} · ${hotspot.representativeTitle}`
-                              : hotspot.shortDescription,
-                            x: hotspot.hotspotX,
-                            y: hotspot.hotspotY,
-                            hotspotX: hotspot.hotspotX,
-                            hotspotY: hotspot.hotspotY,
-                            sceneImage: hotspot.sceneImage,
-                            portraitImage: hotspot.portraitImage,
-                            targetScene: hotspot.isSymbolic
-                              ? 'africa-absence'
-                              : hotspot.isMap
-                              ? 'africa-map'
-                              : 'country',
-                            countryId: !hotspot.isSymbolic && !hotspot.isMap ? hotspot.id : undefined,
-                            isSymbolic: hotspot.isSymbolic,
-                            isMap: hotspot.isMap,
-                          }}
-                          onClick={() => handleSelectTarget(hotspot)}
-                        />
-                      </div>
+                      <InteractiveHotspot
+                        key={`room-hotspot-${hotspot.id}`}
+                        hotspot={{
+                          id: hotspot.id,
+                          label: hotspot.country,
+                          subLabel: hotspot.representative
+                            ? `${hotspot.representative} · ${hotspot.representativeTitle}`
+                            : hotspot.shortDescription,
+                          x: hotspot.hotspotX,
+                          y: hotspot.hotspotY,
+                          hotspotX: hotspot.hotspotX,
+                          hotspotY: hotspot.hotspotY,
+                          sceneImage: hotspot.sceneImage,
+                          portraitImage: hotspot.portraitImage,
+                          targetScene: hotspot.isSymbolic
+                            ? 'africa-absence'
+                            : hotspot.isMap
+                            ? 'africa-map'
+                            : 'country',
+                          countryId: !hotspot.isSymbolic && !hotspot.isMap ? hotspot.id : undefined,
+                          isSymbolic: hotspot.isSymbolic,
+                          isMap: hotspot.isMap,
+                        }}
+                        isTourHighlighted={isTourHighlighted}
+                        className={isTourActive && !isTourHighlighted ? 'opacity-30 scale-90' : 'opacity-100 scale-100'}
+                        onClick={() => handleSelectTarget(hotspot)}
+                      />
                     );
                   })}
                 </div>
@@ -612,7 +679,6 @@ export const ConferenceRoom: React.FC<ConferenceRoomProps> = ({
                   { id: 'uebersicht', label: 'Rolle auf der Konferenz' },
                   { id: 'interessen', label: 'Interessen' },
                   { id: 'folgen', label: 'Folgen' },
-                  { id: 'quellen', label: 'Quellen' },
                 ].map((tab) => (
                   <button
                     key={`dossier-tab-${tab.id}`}
@@ -701,24 +767,6 @@ export const ConferenceRoom: React.FC<ConferenceRoomProps> = ({
                     </div>
                   </div>
                 )}
-
-                {activeTab === 'quellen' && (
-                  <div className="space-y-2.5">
-                    <h4 className="text-[10px] uppercase tracking-wider text-[#c4a46a] font-cinzel mb-1">
-                      Archivsignaturen & Primärquellen
-                    </h4>
-                    <div className="space-y-2">
-                      {activeTarget.sources.map((src, idx) => (
-                        <div key={`${activeTarget.id}-src-${idx}-${src.title}`} className="p-2.5 bg-[#14100c] rounded border border-[#382d22] text-xs">
-                          <p className="font-serif text-[#edd9b9]">{src.title}</p>
-                          <p className="text-[10px] text-[#9c8973] font-sans mt-0.5">
-                            {src.institution} {src.year ? `(${src.year})` : ''}
-                          </p>
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-                )}
               </div>
             </div>
           </motion.div>
@@ -763,7 +811,7 @@ export const ConferenceRoom: React.FC<ConferenceRoomProps> = ({
           >
             <InteractiveAfricaMap
               onBackToConferenceRoom={handleReturnToRoom}
-              initialYear={1885}
+              initialYear={1880}
             />
           </motion.div>
         )}

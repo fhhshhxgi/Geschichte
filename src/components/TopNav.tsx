@@ -6,7 +6,7 @@ import { useAssets } from '../context/AssetContext';
 interface TopNavProps {
   currentScene: 'conference-room' | 'country-detail' | 'africa-absence' | 'africa-map' | 'imperialism' | 'dossier';
   onNavigate: (scene: 'conference-room' | 'africa-absence' | 'africa-map' | 'imperialism' | 'dossier') => void;
-  onOpenSources: () => void;
+  onOpenSources?: () => void;
   onOpenLegal?: () => void;
   onReplayIntro: () => void;
 }
@@ -182,17 +182,20 @@ export const TopNav: React.FC<TopNavProps> = ({
             <span className="hidden sm:inline">Prolog</span>
           </button>
 
-          {/* Sources button */}
-          <button
-            onClick={() => {
-              soundFx.playSubtleTick();
-              onOpenSources();
-            }}
-            className="min-h-[40px] px-2.5 sm:px-3 py-1.5 rounded text-xs font-serif text-[#c4a46a] hover:text-[#f5ebd9] transition-colors border border-[#c4a46a]/40 hover:border-[#c4a46a] cursor-pointer flex items-center gap-1.5 active:scale-95"
-          >
-            <span>📖</span>
-            <span className="hidden sm:inline">Quellen</span>
-          </button>
+          {/* Historical Primary Source button */}
+          {onOpenSources && (
+            <button
+              onClick={() => {
+                soundFx.playSubtleTick();
+                onOpenSources();
+              }}
+              className="min-h-[40px] px-2.5 sm:px-3 py-1.5 rounded text-xs font-serif text-[#c4a46a] hover:text-[#f5ebd9] transition-colors border border-[#c4a46a]/40 hover:border-[#c4a46a] cursor-pointer flex items-center gap-1.5 active:scale-95"
+              title="Historische Primärquelle öffnen"
+            >
+              <span>📖</span>
+              <span className="hidden sm:inline">Quelle</span>
+            </button>
+          )}
 
           {/* Legal and Disclaimer Notice button */}
           {onOpenLegal && (
@@ -298,6 +301,20 @@ export const TopNav: React.FC<TopNavProps> = ({
             >
               📜 Dokumentation &amp; Zeitleiste
             </button>
+
+            {onOpenSources && (
+              <button
+                onClick={() => {
+                  soundFx.playSubtleTick();
+                  onOpenSources();
+                  setMobileMenuOpen(false);
+                }}
+                className="p-2.5 rounded text-left border bg-[#17120e] text-[#c4a46a] border-[#382d22] flex items-center gap-2"
+              >
+                <span>📖</span>
+                <span>Historische Bildquelle (Kongo 1904)</span>
+              </button>
+            )}
 
             {onOpenLegal && (
               <button
